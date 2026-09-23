@@ -1,6 +1,6 @@
 {
   "name": "@flun/nodejs-mobile-react-native",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Node.js for Mobile Apps React Native plugin (flun fork, based on nodejs-mobile-react-native 18.20.4)",
   "main": "index.js",
   "types": "index.d.ts",
