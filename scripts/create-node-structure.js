@@ -58,6 +58,26 @@ const installFiles = (done) => {
     return
   }
 
+  // 如果宿主项目依赖 @flun/node-mobile-app，说明本包是被它带下来的，
+  // node-mobile-app 有自己的模板拷贝逻辑，此处跳过避免重复与误解。
+  try {
+    const hostPkgPath = path.join(fileInstallingPackagePath, 'package.json');
+    if (fs.existsSync(hostPkgPath)) {
+      const hostPkg = JSON.parse(fs.readFileSync(hostPkgPath, 'utf-8'));
+      const allDeps = {
+        ...(hostPkg.dependencies || {}),
+        ...(hostPkg.devDependencies || {}),
+      };
+      if (allDeps['@flun/node-mobile-app']) {
+        console.log('  [create-node-structure] 宿主项目依赖 @flun/node-mobile-app，跳过 nodejs-assets 复制');
+        process.nextTick(() => done());
+        return;
+      }
+    }
+  } catch (e) {
+    // 解析宿主 package.json 失败不阻断流程
+  }
+
   target = path.join(target, 'nodejs-assets')
 
   // 确保目标路径存在

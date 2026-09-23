@@ -64,3 +64,6 @@ Thumbs.db
 
 # Android libnode：不进 npm，装包时由 postinstall 下载
 android/libnode/
+
+# iOS NodeMobile：不进 npm，装包时由 postinstall 下载
+ios/NodeMobile.xcframework/

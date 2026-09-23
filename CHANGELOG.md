@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.0.1] - 2026-09-22 21:19
+## [1.0.1] - 2026-09-22
 
 ### 首发
 
@@ -22,19 +22,52 @@
 - `package.json` 的 `main` 指向 `index.cjs`
 - 效果：用户项目是 CJS 或 ESM，`import rn_bridge from 'rn-bridge'` 与 `require('rn-bridge')` 都能加载
 
+### 预编译资源分发（新增机制）
+
+**背景**：`libnode.so`（Android，约 187 MB）与 `NodeMobile.xcframework`（iOS，约 162 MB）体积太大，直接进 git 会超出托管平台的文件上限（GitHub 单文件 100 MB 硬限制、Gitee 免费版 50 MB），直接进 npm 会让用户装包时被迫下载 107 MB。
+
+**方案**：两套预编译二进制从 git 与 npm 包中移除，改为 postinstall 阶段按需下载。
+
+- **新增脚本**：`scripts/download-prebuilt-assets.js`
+- **新增 `package.json` 字段**：`prebuiltAssets`
+  - `version`：目标版本（如 `v18.20.4`）
+  - `sources`：下载源列表，按顺序尝试（Gitee → GitHub）
+  - `assets`：资源清单，每个 asset 含 `file` / `entry` / `target` / `platforms` / `envKey` / `hint`
+- **下载后行为**：解压并覆盖 `android/libnode/` 与 `ios/NodeMobile.xcframework/`，各自写 `.flun-version` 标记，版本匹配则跳过
+- **平台判断**：
+  - Windows / Linux：只下 Android
+  - macOS：会打印提示，由用户决定是否一并下 iOS
+- **失败处理**：所有源都失败时打印下载链接，**不中断 npm 安装**，用户可手动下载覆盖
+
+**环境变量**：
+
+| 变量                                  | 作用                          |
+| ------------------------------------- | ----------------------------- |
+| `NODE_MOBILE_PREBUILT_VERSION`        | 覆盖默认版本（如 `v22.23.2`） |
+| `NODE_MOBILE_PREBUILT_SKIP=1`         | 跳过全部下载                  |
+| `NODE_MOBILE_PREBUILT_ANDROID_SKIP=1` | 只跳过 Android                |
+| `NODE_MOBILE_PREBUILT_IOS_SKIP=1`     | 只跳过 iOS                    |
+
+**npm 包体积**：tarball 从 107 MB 降到 **1.2 MB**，用户装包时秒装，之后 postinstall 拉二进制。
+
 ### 依赖调整
 
 - 依赖从 `nodejs-mobile-gyp` 换成 **`@flun/nodejs-mobile-gyp`**（升级 tar / glob / make-fetch-happen，消除 deprecated 警告）
 - 删除 `xcode` 依赖（RN 0.60 autolinking 前的遗留，代码中零引用）
 - `react-native` 的 peer 标为 **optional**（`peerDependenciesMeta`），避免本地安装拉下整棵 RN 依赖树
+- 新增 `adm-zip`（postinstall 解压预编译资源用）
 
 ### 修复的上游问题
 
 - **`create-node-structure.js` 依赖 `npm_package_name`**：`file:` / tgz 安装场景下 npm 不注入此环境变量，导致 `path.join(undefined, ...)` 报错。改为从 `__dirname` 反推包目录，并用 `INIT_CWD` 作为 fallback。
 - **`android/build.gradle` gyp 路径**：适配 scoped 包 `@flun/nodejs-mobile-gyp`，保留对旧路径 `nodejs-mobile-gyp` 的兼容探测。
 - **`ios-build-native-modules.sh` gyp 路径**：同上。
+- **`create-node-structure.js` 跳过逻辑**：宿主项目若依赖 `@flun/node-mobile-app`，本包不再执行 nodejs-assets 复制——node-mobile-app 有自己的模板拷贝逻辑，重复执行只会让用户困惑。
+- **`index.js` 用户可见错误信息中文化**：`start` / `startWithArgs` 参数校验、`Channel not found` 报错改为中文。
 
 ### 验证
 
-- Android：Windows + `npx node-mobile-app test` / `build` 全流程通过，App 正常启动
-- iOS：保留对 Node 18 的支持（未在 macOS 上实测）
+- Android：Windows + `npx node-mobile-app test` / `build` 全流程通过，App 正常启动。
+- 预编译资源下载：Gitee / GitHub 双源均可达，重复执行脚本会跳过已装版本；模拟 macOS 时 iOS 附件正确下载并覆盖。
+- npm 打包：tarball 1.2 MB，无 `android/libnode/bin`、无 `ios/NodeMobile.xcframework`。
+- iOS：保留对 Node 18 的支持（未在 macOS 上实测）。

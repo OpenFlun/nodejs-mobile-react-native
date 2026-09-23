@@ -5,7 +5,7 @@
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
-    "postinstall": "node scripts/create-node-structure.js && node scripts/download-android-libnode.js"
+    "postinstall": "node scripts/create-node-structure.js && node scripts/download-prebuilt-assets.js"
   },
   "keywords": [
     "react-native",
@@ -33,11 +33,11 @@
     }
   },
   "dependencies": {
-    "mkdirp": "^0.5.1",
+    "mkdirp": "^3.0.1",
     "ncp": "^2.0.0",
     "node-gyp-build-mobile": "4.6.0-3",
     "@flun/nodejs-mobile-gyp": "^1.0.1",
-    "adm-zip": "^0.5.16"
+    "adm-zip": "^0.6.1"
   },
   "type": "module",
   "files": [
@@ -61,6 +61,7 @@
     "!ios/DerivedData/",
     "!ios/.symlinks/",
     "!ios/**/xcuserdata/",
+    "!ios/NodeMobile.xcframework/",
     "install/",
     "scripts/",
     "CHANGELOG.md",
@@ -71,12 +72,35 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "libnode": {
+  "prebuiltAssets": {
     "version": "v18.20.4",
-    "file": "android-libnode.zip",
     "sources": [
       "https://gitee.com/OpenFlun/nodejs-mobile/releases/download",
       "https://github.com/OpenFlun/nodejs-mobile/releases/download"
+    ],
+    "assets": [
+      {
+        "file": "android-libnode.zip",
+        "entry": "libnode",
+        "target": "android/libnode",
+        "platforms": [
+          "win32",
+          "darwin",
+          "linux"
+        ],
+        "envKey": "ANDROID"
+      },
+      {
+        "file": "ios-nodemobile.zip",
+        "entry": "NodeMobile.xcframework",
+        "target": "ios/NodeMobile.xcframework",
+        "platforms": [
+          "darwin"
+        ],
+        "envKey": "IOS",
+        "hintOn": "darwin",
+        "hint": "检测到 macOS，将一并下载 iOS 附件（约 47 MB）。若只做 Android 编译，可设置环境变量 NODE_MOBILE_PREBUILT_IOS_SKIP=1 跳过。"
+      }
     ]
   },
   "module": "./index.js",
