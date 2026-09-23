@@ -1,6 +1,6 @@
 {
   "name": "@flun/nodejs-mobile-react-native",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Node.js for Mobile Apps React Native plugin (flun fork, based on nodejs-mobile-react-native 18.20.4)",
   "main": "index.js",
   "types": "index.d.ts",
@@ -36,7 +36,7 @@
     "mkdirp": "^3.0.1",
     "ncp": "^2.0.0",
     "node-gyp-build-mobile": "4.6.0-3",
-    "@flun/nodejs-mobile-gyp": "^1.0.1",
+    "@flun/nodejs-mobile-gyp": "*",
     "adm-zip": "^0.6.1"
   },
   "type": "module",

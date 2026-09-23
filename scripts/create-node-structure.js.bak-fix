@@ -1,12 +1,11 @@
 ﻿// 改编自 www.npmjs.com/package/install-files 项目
+
 import path from 'path'
 import fs from 'fs'
+import ncp from 'ncp'
+import mkdirp from 'mkdirp'
 import { fileURLToPath } from 'url'
-import { createRequire } from 'module'
 
-const require = createRequire(import.meta.url)
-const ncp = require('ncp')
-const mkdirp = require('mkdirp')
 const __filename = fileURLToPath(import.meta.url)
 
 /**

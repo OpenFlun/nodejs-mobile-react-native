@@ -1,4 +1,11 @@
-# Changelog
+# 变更日志
+## [1.0.2] - 2026-09-23
+
+### 修复
+
+- **`create-node-structure.js` 的 ESM 加载错误**：Node ESM 加载 CJS 包（`mkdirp`、`ncp`）时，部分环境下不提供 default 导出，导致安装即报 `The requested module 'mkdirp' does not provide an export named 'default'`。改用 `createRequire(import.meta.url)` 走 CJS 加载路径，兼容所有 Node 版本。
+
+---
 
 ## [1.0.1] - 2026-09-23 12:02
 
