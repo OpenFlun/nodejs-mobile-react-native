@@ -1,0 +1,61 @@
+# 依赖
+node_modules/
+package-lock.json
+
+# Android 构建产物
+android/.cxx/
+android/build/
+android/app/build/
+android/.gradle/
+android/.kotlin/
+android/local.properties
+
+# iOS 构建产物
+ios/Pods/
+ios/build/
+ios/DerivedData/
+ios/*.xcworkspace/xcuserdata/
+ios/*.xcodeproj/xcuserdata/
+ios/.symlinks/
+*.ipa
+
+# 通用构建产物
+build/
+out/
+*.bak
+*.o
+*.a
+*.node
+
+# 日志
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 编辑器 / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 系统
+.DS_Store
+Thumbs.db
+
+# 环境
+.env
+.env.local
+
+# 发布相关
+*.tgz
+*.ps1
+# libnode 下载临时目录
+.libnode-tmp/
+
+# Android libnode：不进 git，装包时由 postinstall 下载
+android/libnode/
+
+# iOS NodeMobile：不进 git，走 Release 附件下载
+ios/NodeMobile.xcframework/

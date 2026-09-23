@@ -1,0 +1,76 @@
+{
+  "name": "@flun/nodejs-mobile-react-native",
+  "version": "1.0.0",
+  "description": "Node.js for Mobile Apps React Native plugin (flun fork, based on nodejs-mobile-react-native 18.20.4)",
+  "main": "index.js",
+  "type": "module",
+  "types": "index.d.ts",
+  "module": "./index.js",
+  "exports": {
+    ".": "./index.js"
+  },
+  "scripts": {
+    "postinstall": "node scripts/create-node-structure.js"
+  },
+  "keywords": [
+    "react-native",
+    "mobile",
+    "nodejs",
+    "node.js",
+    "nodejs-mobile"
+  ],
+  "author": "flun",
+  "license": "MIT",
+  "homepage": "https://github.com/OpenFlun/nodejs-mobile-react-native",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OpenFlun/nodejs-mobile-react-native"
+  },
+  "bugs": {
+    "url": "https://github.com/OpenFlun/nodejs-mobile-react-native/issues"
+  },
+  "peerDependencies": {
+    "react-native": ">=0.60.0"
+  },
+  "peerDependenciesMeta": {
+    "react-native": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "mkdirp": "^0.5.1",
+    "ncp": "^2.0.0",
+    "node-gyp-build-mobile": "4.6.0-3",
+    "@flun/nodejs-mobile-gyp": "^1.0.1"
+  },
+  "files": [
+    "index.js",
+    "native.js",
+    "index.d.ts",
+    "types.d.ts",
+    "react-native.config.js",
+    "nodejs-mobile-react-native.podspec",
+    "android/",
+    "!android/.cxx/",
+    "!android/build/",
+    "!android/app/build/",
+    "!android/.gradle/",
+    "!android/.kotlin/",
+    "!android/local.properties",
+    "ios/",
+    "!ios/Pods/",
+    "!ios/build/",
+    "!ios/DerivedData/",
+    "!ios/.symlinks/",
+    "!ios/**/xcuserdata/",
+    "install/",
+    "scripts/",
+    "CHANGELOG.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}

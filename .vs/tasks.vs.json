@@ -1,0 +1,35 @@
+﻿{
+    "version": "0.2.1",
+    "tasks": [
+        {
+            "taskLabel": "发布到npm(小版本)",
+            "appliesTo": "/",
+            "type": "default",
+            "command": "pwsh.exe",
+            "args": [
+                "-Command",
+                "Start-Process pwsh.exe -ArgumentList '-File', '${workspaceRoot}\\publish.ps1', '-VersionType', 'patch'"
+            ]
+        },
+        {
+            "taskLabel": "发布到npm(中版本)",
+            "appliesTo": "/",
+            "type": "default",
+            "command": "pwsh.exe",
+            "args": [
+                "-Command",
+                "Start-Process pwsh.exe -ArgumentList '-File', '${workspaceRoot}\\publish.ps1', '-VersionType', 'minor'"
+            ]
+        },
+        {
+            "taskLabel": "发布到npm(大版本)",
+            "appliesTo": "/",
+            "type": "default",
+            "command": "pwsh.exe",
+            "args": [
+                "-Command",
+                "Start-Process pwsh.exe -ArgumentList '-File', '${workspaceRoot}\\publish.ps1', '-VersionType', 'major'"
+            ]
+        }
+    ]
+}
