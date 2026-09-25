@@ -9,9 +9,7 @@
   "exports": {
     ".": "./index.js"
   },
-  "scripts": {
-    "postinstall": "node scripts/create-node-structure.js && node scripts/download-prebuilt-assets.js"
-  },
+  "scripts": {},
   "keywords": [
     "react-native",
     "mobile",
@@ -69,7 +67,7 @@
     "mkdirp": "^3.0.1",
     "ncp": "^2.0.0",
     "node-gyp-build-mobile": "4.6.0-3",
-    "@flun/nodejs-mobile-gyp": "*",
+    "@flun/nodejs-mobile-gyp": "^1.0.1",
     "adm-zip": "^0.6.1"
   },
   "publishConfig": {
