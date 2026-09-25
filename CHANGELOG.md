@@ -1,4 +1,31 @@
 # 变更日志
+
+## [2.0.0] - 2026-09-25 21:15
+
+### 破坏性变更
+
+- **Node.js 运行时升级：v18.20.4 -> v22.23.2**，Android / iOS 的 `prebuiltAssets.version` 同步更新
+  - Android：v22.23.2 内置完整 ICU（full-icu），支持 `\p{...}` 等 Unicode 属性转义
+  - iOS：暂未适配 full-icu，后续跟进
+
+### 修复
+
+- **CJS loader 补丁按目录定位 rn-bridge**：早期 v22 产物内置的 CJS loader 补丁按 `rn-bridge/index.js` 硬编码定位入口，与本包在 `type: module` 下已改名为 `index.cjs` 的入口不匹配，导致 App 启动即闪退（`FORTIFY: pthread_mutex_lock called on a destroyed mutex` + `SIGABRT`）。适配包的 CJS loader 补丁改为按目录 `rn-bridge` 定位，入口文件名交给该目录 `package.json` 的 `main` 字段解析，`index.js` / `index.cjs` / `index.mjs` 均可正确加载。
+
+### 文档
+
+- **`metro.config.js` 排除配置**：
+  - `blacklistRE` -> `blockList`（Metro 0.61 起重命名，0.86+ 已移除旧名）
+  - 导入路径 `metro-config/src/defaults/exclusionList.js` -> `metro-config/private/defaults/exclusionList`（Metro 0.83 起 `src/*` 不再暴露；不带 `.js` 后缀，需经 `.default` 取值）
+  - 正则改为 `/[/\\]nodejs-assets[/\\].*/` 形式（原来依赖字符串转义，跨平台易出错）
+- **`main.js` 示例**：统一为 `createRequire(import.meta.url)` 写法，避免 `type: module` 下直接 `require` 报错
+- **安装命令**：去掉 `-D`（本包在直接使用场景下为运行时依赖；仅通过 `@flun/node-mobile-app` 间接使用时才可作开发依赖）
+- **`allowScripts` 字段说明**：npm 11.16+ 引入，npm 12 默认强制执行；旧版本忽略，新版本缺失则依赖的安装脚本不执行
+- **Channel 回调边界**：补充 `null` 可序列化、`NaN` / `Infinity` / `-Infinity` 转 `null`、`undefined` 在对象中剔除 / 数组中转 `null`、循环引用抛 `TypeError`
+- 全文标点、空格、措辞规范化；「共享同一进程」改为「同一进程的不同线程」；「互不影响」改为「彼此独立」
+
+---
+
 ## [1.0.3] - 2026-09-23 19:11
 
 ### 修复

@@ -1,9 +1,14 @@
 {
   "name": "@flun/nodejs-mobile-react-native",
   "version": "1.0.3",
-  "description": "Node.js for Mobile Apps React Native plugin (flun fork, based on nodejs-mobile-react-native 18.20.4)",
-  "main": "index.js",
+  "description": "Node.js for Mobile Apps React Native plugin (flun fork, based on nodejs-mobile-react-native)",
+  "type": "module",
+  "module": "./index.js",
   "types": "index.d.ts",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js"
+  },
   "scripts": {
     "postinstall": "node scripts/create-node-structure.js && node scripts/download-prebuilt-assets.js"
   },
@@ -15,31 +20,6 @@
     "nodejs-mobile"
   ],
   "author": "flun",
-  "license": "MIT",
-  "homepage": "https://github.com/OpenFlun/nodejs-mobile-react-native",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/OpenFlun/nodejs-mobile-react-native"
-  },
-  "bugs": {
-    "url": "https://github.com/OpenFlun/nodejs-mobile-react-native/issues"
-  },
-  "peerDependencies": {
-    "react-native": ">=0.60.0"
-  },
-  "peerDependenciesMeta": {
-    "react-native": {
-      "optional": true
-    }
-  },
-  "dependencies": {
-    "mkdirp": "^3.0.1",
-    "ncp": "^2.0.0",
-    "node-gyp-build-mobile": "4.6.0-3",
-    "@flun/nodejs-mobile-gyp": "*",
-    "adm-zip": "^0.6.1"
-  },
-  "type": "module",
   "files": [
     "index.js",
     "native.js",
@@ -68,12 +48,36 @@
     "README.md",
     "LICENSE"
   ],
+  "license": "ISC",
+  "homepage": "https://github.com/OpenFlun/nodejs-mobile-react-native",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OpenFlun/nodejs-mobile-react-native"
+  },
+  "bugs": {
+    "url": "https://github.com/OpenFlun/nodejs-mobile-react-native/issues"
+  },
+  "peerDependencies": {
+    "react-native": ">=0.87.1"
+  },
+  "peerDependenciesMeta": {
+    "react-native": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "mkdirp": "^3.0.1",
+    "ncp": "^2.0.0",
+    "node-gyp-build-mobile": "4.6.0-3",
+    "@flun/nodejs-mobile-gyp": "*",
+    "adm-zip": "^0.6.1"
+  },
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
   "prebuiltAssets": {
-    "version": "v18.20.4",
+    "version": "v22.23.2",
     "sources": [
       "https://gitee.com/OpenFlun/nodejs-mobile/releases/download",
       "https://github.com/OpenFlun/nodejs-mobile/releases/download"
@@ -102,9 +106,5 @@
         "hint": "检测到 macOS，将一并下载 iOS 附件（约 47 MB）。若只做 Android 编译，可设置环境变量 NODE_MOBILE_PREBUILT_IOS_SKIP=1 跳过。"
       }
     ]
-  },
-  "module": "./index.js",
-  "exports": {
-    ".": "./index.js"
   }
 }
