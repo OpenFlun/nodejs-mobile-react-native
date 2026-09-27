@@ -58,7 +58,7 @@ cd ios && pod install
 
 ```bash
 # 覆盖当前版本(具体版本号请在 package.json 的 "prebuiltAssets" 查看)
-# 目前支持的版本号(v18.20.4, v22.23.2)
+# 当前已编译的版本号(v18.20.4, v22.23.2)
 NODE_MOBILE_PREBUILT_VERSION=你的目标版本号
 
 # 跳过全部下载
@@ -101,7 +101,7 @@ Android 与 iOS 采用**各自独立**的 Node.js 运行时, 版本由 `package.
 ├── README.md                     # 本文件
 │
 ├── android/                      # Android 原生工程
-│   ├── build.gradle              # 含 gyp 路径探测(@flun/nodejs-mobile-gyp)与 abiFilters patch 入口
+│   ├── build.gradle              # gyp 路径探测、abiFilters、NDK 工具链注入、Windows 适配(cmd / sh.exe / 正斜杠)
 │   ├── CMakeLists.txt            # 编译 rn-bridge.cpp + native-lib.cpp
 │   └── src/main/
 │       ├── AndroidManifest.xml
@@ -137,7 +137,7 @@ Android 与 iOS 采用**各自独立**的 Node.js 运行时, 版本由 `package.
 ├── scripts/                      # 构建与安装期脚本(全部 ESM)
 │   ├── create-node-structure.js     # postinstall: 复制 nodejs-assets 到宿主项目根; 宿主项目依赖 @flun/node-mobile-app 时跳过
 │   ├── download-prebuilt-assets.js  # postinstall: 从 Gitee / GitHub Release 下载 libnode.so / NodeMobile.xcframework
-│   ├── patch-package.js             # 补丁原生模块的 package.json(node-gyp-build → node-gyp-build-mobile)
+│   ├── patch-package.js             # 补丁原生模块的 package.json(node-gyp-build → node-gyp-build-mobile, 绝对路径调用)
 │   ├── ios-copy-nodejs-project.sh   # iOS Script Phase: 复制 Node 项目
 │   ├── ios-build-native-modules.sh  # iOS Script Phase: 调用 @flun/nodejs-mobile-gyp 编译原生模块
 │   ├── ios-sign-native-modules.sh   # iOS Script Phase: 签名原生模块
@@ -271,9 +271,21 @@ Node.js 运行时通过 Unix 风格的路径访问文件; Android 上, Node 项�
 
 #### 原生模块
 
-Linux 与 macOS 上支持编译带原生代码的模块;
+Windows / Linux / macOS 上均支持编译带原生代码的模块;
 
-插件会扫描 `nodejs-project` 目录下的 `.gyp` 文件, 自动识别原生模块; 构建前请先按 [nodejs-mobile 的文档](https://github.com/OpenFlun/nodejs-mobile) 装好 Android / iOS 的编译前置工具链; Android 上建议设置环境变量 `ANDROID_NDK_HOME`;
+插件会扫描 `nodejs-project` 目录下的 `.gyp` 文件, 自动识别原生模块;
+
+**前置工具链**:
+
+- **Android**:需要 Android NDK; 插件会自动定位 NDK 并把工具链路径注入构建环境, 无需手动设置 `ANDROID_NDK_HOME`;
+- **iOS**:需要 Xcode Command Line Tools(仅 macOS);
+- **Windows 额外需要**:Visual Studio(含「使用 C++ 的桌面开发」工作负载)与 Git for Windows(提供 make 所需的 POSIX 工具); 完整清单见 [@flun/nodejs-mobile-gyp 的系统要求](https://github.com/OpenFlun/nodejs-mobile-gyp#支持的系统与配置要求);
+
+**运行时版本与开发机的 Node 版本相互独立**:
+
+`prebuiltAssets.version` 指的是**移动端内置的 Node 运行时版本**, 与开发机安装的 Node 版本无关; 只要开发机的 Node 满足 `package.json` 的 `engines.node` 要求即可编译原生模块——产物的 ABI 由 NDK 与运行时自带的头文件决定, 开发机的 Node 仅用于驱动构建工具链;
+
+切换运行时版本请设置环境变量 `NODE_MOBILE_PREBUILT_VERSION`(详见「安装」章节);
 
 Android 上编译原生模块耗时较长(要为每个架构构建独立的 NDK 工具链); 编译产物 `.node` 会按架构分开打进应用, 运行时选择正确的那个;
 

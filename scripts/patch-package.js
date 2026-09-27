@@ -1,5 +1,8 @@
 ﻿import fs from 'fs'
 import path from 'path'
+import { createRequire } from 'module'
+
+const require_ = createRequire(import.meta.url)
 
 /**
  * 补丁 package.json：某些模块的 binary 字段带运行时变量替换，
@@ -46,6 +49,16 @@ const patchPackageJSON_preNodeGyp_modulePath = (packageJSONPath) => {
  * 指向 nodejs-mobile-gyp。
  */
 const patchPackageJSONNodeGypBuild = (packageJSONPath) => {
+  let gypBuildMobileBin
+  try {
+    const pkgJsonPath = require_.resolve('node-gyp-build-mobile/package.json')
+    gypBuildMobileBin = path.join(path.dirname(pkgJsonPath), 'bin.js')
+  } catch (e) {
+    gypBuildMobileBin = null
+  }
+  const gypBuildReplacement = gypBuildMobileBin
+    ? process.execPath + ' ' + gypBuildMobileBin
+    : 'node-gyp-build-mobile'
   const packageJSONReadData = fs.readFileSync(packageJSONPath)
   let packageJSON
   try {
@@ -62,7 +75,7 @@ const patchPackageJSONNodeGypBuild = (packageJSONPath) => {
   if (!packageJSON.scripts.install.includes('node-gyp-build')) return
   packageJSON.scripts.install = packageJSON.scripts.install.replace(
     /node-gyp-build(?!-)/g,
-    '$PROJECT_DIR/../node_modules/.bin/node-gyp-build-mobile',
+    gypBuildReplacement,
   )
   const packageJSONWriteData = JSON.stringify(packageJSON, null, 2)
   fs.writeFileSync(packageJSONPath, packageJSONWriteData)

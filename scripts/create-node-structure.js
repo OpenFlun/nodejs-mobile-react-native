@@ -1,4 +1,4 @@
-﻿// 改编自 www.npmjs.com/package/install-files 项目
+// 改编自 www.npmjs.com/package/install-files 项目
 import path from 'path'
 import fs from 'fs'
 import { fileURLToPath } from 'url'
@@ -6,7 +6,6 @@ import { createRequire } from 'module'
 
 const require = createRequire(import.meta.url)
 const ncp = require('ncp')
-const mkdirp = require('mkdirp')
 const __filename = fileURLToPath(import.meta.url)
 
 /**
@@ -81,11 +80,12 @@ const installFiles = (done) => {
 
   target = path.join(target, 'nodejs-assets')
 
-  // 确保目标路径存在
-  mkdirp(target, (err) => {
-    if (err) process.nextTick(() => done(err))
-    return
-  })
+  // 确保目标路径存在（Node 10+ 原生支持递归建目录，无需 mkdirp 依赖）
+  try {
+    fs.mkdirSync(target, { recursive: true })
+  } catch (err) {
+    return process.nextTick(() => done(err))
+  }
 
   // 覆盖同名文件，仅复制 node-assets
   const options = {

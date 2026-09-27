@@ -1,5 +1,38 @@
 # 变更日志
 
+## [2.0.2] - 2026-09-27 19:43
+
+### 修复
+
+- **`mkdirp` v3 导致的安装失败**：`mkdirp` 自 v3 起为纯 ESM 包，`createRequire(import.meta.url)` 后 `require('mkdirp')` 得到的不是函数，安装脚本 `create-node-structure.js` 报 `TypeError: mkdirp is not a function`，导致整个包安装中断。现已移除 `mkdirp` 依赖，改用 Node 内置的 `fs.mkdirSync(target, { recursive: true })`（Node 10+ 原生支持递归建目录）。同时修正了原代码中"建目录与 `ncp` 复制未串行"的竞态：原 `mkdirp` 回调除报错外不做任何事，`ncp` 也未等待其完成。
+- **`android/build.gradle` 定位 `@flun/nodejs-mobile-gyp` 的方式**：原先用硬编码相对路径逐级猜测（`../../@flun/...`、`../node_modules/@flun/...` 等），在 pnpm、yarn/npm workspaces（monorepo）、嵌套安装等场景下会猜错；且兜底分支会静默命中未加 scope 的上游同名包 `nodejs-mobile-gyp`，构建行为可能被悄悄替换。现改为 `workingDir project.projectDir` + `node -p require.resolve("@flun/nodejs-mobile-gyp/bin/node-gyp.js")`，走 Node 模块解析，与 iOS 侧 `ios-build-native-modules.sh` 的做法一致；解析失败时直接抛 `GradleException`，不再静默回退。
+
+### 新增
+
+- **Windows 宿主平台支持**：此前 Windows 上无法编译 Android 原生模块，本版起支持。`android/build.gradle` 完成以下适配：
+  - 宿主工具链标签改为 `windows-x86_64`，clang 包装脚本加 `.cmd` 后缀，`llvm-ar` / `llvm-ranlib` 加 `.exe` 后缀；
+  - Windows 下复用 Linux 的 gyp 定义（`make-android` 生成器无 Windows 宿主概念）；
+  - `project.exec` 在 Gradle 9 已移除，改用 `ExecOperations`；
+  - npm 走 `cmd /c npm.cmd` 并传入绝对路径（Gradle 的子进程 PATH 不含 Node 目录）；
+  - 自动定位 Git for Windows 的 `usr/bin` 并前置到 PATH，为 GNU make 提供 `sh.exe` / `printf` / `xargs`；
+  - 传入 `android_ndk_path` 供 `common.gypi` 使用，避免 gyp 因变量未定义在解析阶段报错。
+
+### 变更
+
+- **`android/build.gradle` 运行时版本处理**：`prebuiltAssets.version` 指移动端内置的 Node 运行时版本，与开发机 Node 版本相互独立。原先由运行时版本反推开发机 Node 最低要求并强制检查，会误伤「运行时 v22、开发机 Node 18」等合法场景（尤其用户切换 v18 产物时）。现改为：
+  - 运行时版本优先读环境变量 `NODE_MOBILE_PREBUILT_VERSION`，其次 `package.json` 的 `prebuiltAssets.version`；
+  - 不再强制检查开发机 Node 版本，仅打印诊断信息 `Building native modules with host Node.js X for mobile runtime vY`。
+- **`scripts/patch-package.js`**：不再把 `node-gyp-build` 替换为 Unix 风格的 `$PROJECT_DIR/...` 路径（Windows `cmd` 不识别 shell 变量）。改为调用 `require.resolve('node-gyp-build-mobile/package.json')` 定位真实路径，并写成 `node "<绝对路径>/bin.js"`，跨平台可用；`node` 与 `bin.js` 均取绝对路径，避免子进程 PATH 缺失。
+- **`package.json`**：移除 `mkdirp` 依赖。
+
+### 验证
+
+- Windows + VS2026 BuildTools + Python + Node + NDK 27.x 环境，配合 `@flun/nodejs-mobile-gyp` 1.1.0，`npx node-mobile-app test` 全流程通过；生成的 APK 安装到真机并正常启动。
+- 分别用运行时产物 `v22.23.2` 与 `v18.20.4` 各跑一次完整构建，均成功。
+- 无原生模块场景（仅有纯 JS 依赖）回归通过，构建流程与改动前一致。
+
+---
+
 ## [2.0.1] - 2026-09-26 22:12
 ### 更新
 - 依赖包 '@flun/nodejs-mobile-gyp' 更新为 v1.0.2;
