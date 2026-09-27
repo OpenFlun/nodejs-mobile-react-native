@@ -68,7 +68,7 @@
   "dependencies": {
     "ncp": "^2.0.0",
     "node-gyp-build-mobile": "4.6.0-3",
-    "@flun/nodejs-mobile-gyp": "^1.1.0",
+    "@flun/nodejs-mobile-gyp": "*",
     "adm-zip": "^0.6.1"
   },
   "publishConfig": {
