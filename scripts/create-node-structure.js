@@ -9,7 +9,7 @@ const require = createRequire(import.meta.url), ncp = require('ncp'), __filename
    * 从文件路径推断宿主包目录（node_modules 的上一级）
    */
   hostPackageDir = file => {
-    const pathComponents = file.split(path.sep), modulesDirIndex = pathComponents.lastIndexOf('node_modules');
+    const pathComponents = file.split(path.sep), modulesDirIndex = pathComponents.indexOf('node_modules');
 
     if (modulesDirIndex < 1) return undefined
     return pathComponents.slice(0, modulesDirIndex).join(path.sep)
@@ -21,10 +21,8 @@ const require = createRequire(import.meta.url), ncp = require('ncp'), __filename
   writeMacOSHelperScript = (target, name, cmd) => {
     fs.writeFileSync(
       path.join(target, name),
-      '#!/bin/bash\n' +
-      '# 辅助脚本：当 ' + cmd + ' 不在 PATH 时供 Gradle 在 macOS 上调用\n' +
-      'export PATH=$PATH:' + process.env.PATH + '\n' +
-      cmd + ' $@\n', { mode: 0o755 });
+      '#!/bin/bash\n' + '# 辅助脚本：当 ' + cmd + ' 不在 PATH 时供 Gradle 在 macOS 上调用\n' +
+      'export PATH=$PATH:' + process.env.PATH + '\n' + cmd + ' $@\n', { mode: 0o755 });
   },
   /**
    * 把插件内的 nodejs-assets 复制到宿主项目根
