@@ -2,10 +2,11 @@
   "name": "rn-bridge",
   "version": "0.2.0",
   "description": "NodeJS for Mobile React Native Bridge",
+  "type": "module",
   "main": "index.cjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "JaneaSystems Inc.",
-  "license": "MIT"
+  "license": "ISC"
 }

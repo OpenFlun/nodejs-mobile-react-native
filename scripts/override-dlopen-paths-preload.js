@@ -18,40 +18,25 @@ import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const __dirname = path.dirname(fileURLToPath(import.meta.url)),
+  substitutionDataFile = path.join(__dirname, 'override-dlopen-paths-data.json');
 
-const substitutionDataFile = path.join(
-  __dirname,
-  'override-dlopen-paths-data.json',
-)
 // 若该 json 文件存在，则覆盖 dlopen，改为加载指定的框架路径。
 if (fs.existsSync(substitutionDataFile)) {
-  const pathSubstitutionData = JSON.parse(
-    fs.readFileSync(substitutionDataFile, 'utf8'),
-  )
-
-  const pathSubstitutionDictionary = {}
+  const pathSubstitutionData = JSON.parse(fs.readFileSync(substitutionDataFile, 'utf8')), pathSubstitutionDictionary = {};
   // 构建字典，在运行时按当前沙盒路径转换路径。
   for (let i = 0; i < pathSubstitutionData.length; i++) {
     pathSubstitutionDictionary[
-      path.normalize(
-        path.join(
-          ...([__dirname].concat(pathSubstitutionData[i].originalpath)),
-        ),
-      )
-    ] = path.normalize(
-      path.join(
-        ...([__dirname].concat(pathSubstitutionData[i].newpath)),
-      ),
-    )
+      path.normalize(path.join(...([__dirname].concat(pathSubstitutionData[i].originalpath))))
+    ] = path.normalize(path.join(...([__dirname].concat(pathSubstitutionData[i].newpath))))
   }
 
   const old_dlopen = process.dlopen
   // 覆盖 process.dlopen
-  process.dlopen = function (_module, _filename) {
-    if (pathSubstitutionDictionary[path.normalize(_filename)]) {
-      _filename = pathSubstitutionDictionary[path.normalize(_filename)]
-    }
+  process.dlopen = (_module, _filename) => {
+    if (pathSubstitutionDictionary[path.normalize(_filename)])
+      _filename = pathSubstitutionDictionary[path.normalize(_filename)];
+
     old_dlopen(_module, _filename)
   }
 }

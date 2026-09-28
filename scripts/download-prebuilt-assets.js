@@ -47,76 +47,49 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import AdmZip from 'adm-zip';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const packageRoot = path.resolve(__dirname, '..');
-const tmpDir = path.join(packageRoot, '.prebuilt-tmp');
-const log = (...a) => console.log('  [prebuilt]', ...a);
+const __dirname = path.dirname(fileURLToPath(import.meta.url)), packageRoot = path.resolve(__dirname, '..'),
+  tmpDir = path.join(packageRoot, '.prebuilt-tmp'), log = (...a) => console.log('  [prebuilt]', ...a);
 
 // 全局跳过
-if (process.env.NODE_MOBILE_PREBUILT_SKIP === '1') {
-  log('NODE_MOBILE_PREBUILT_SKIP=1，跳过');
-  process.exit(0);
-}
+if (process.env.NODE_MOBILE_PREBUILT_SKIP === '1') log('NODE_MOBILE_PREBUILT_SKIP=1，跳过'), process.exit(0);
 
 // 本地开发保护
-if (process.env.INIT_CWD && path.resolve(process.env.INIT_CWD) === path.resolve(packageRoot)) {
-  log('检测到本地开发场景，跳过');
-  process.exit(0);
-}
+if (process.env.INIT_CWD && path.resolve(process.env.INIT_CWD) === path.resolve(packageRoot))
+  log('检测到本地开发场景，跳过'), process.exit(0);
 
 // 读 package.json
-const pkg = JSON.parse(fs.readFileSync(path.join(packageRoot, 'package.json'), 'utf-8'));
-const cfg = pkg.prebuiltAssets;
-if (!cfg) {
-  log('package.json 未配置 prebuiltAssets 字段，跳过');
-  process.exit(0);
-}
+const pkg = JSON.parse(fs.readFileSync(path.join(packageRoot, 'package.json'), 'utf-8')), cfg = pkg.prebuiltAssets;
+if (!cfg) log('package.json 未配置 prebuiltAssets 字段，跳过'), process.exit(0);
 
-const targetVersion = process.env.NODE_MOBILE_PREBUILT_VERSION || cfg.version;
-const sources = cfg.sources || [];
-const assets = cfg.assets || [];
+const targetVersion = process.env.NODE_MOBILE_PREBUILT_VERSION || cfg.version,
+  sources = cfg.sources || [], assets = cfg.assets || [];
 
-if (!targetVersion || sources.length === 0 || assets.length === 0) {
-  log('prebuiltAssets 字段配置不完整，跳过');
-  process.exit(0);
-}
+if (!targetVersion || sources.length === 0 || assets.length === 0) log('prebuiltAssets 字段配置不完整,跳过'), process.exit(0);
 
-for (const asset of assets) {
-  await processAsset(asset);
-}
-
-async function processAsset(asset) {
+const processAsset = async asset => {
   const { file, entry, target, platforms, envKey, hintOn, hint } = asset;
   if (!file || !entry || !target) {
     log('asset 配置不完整（缺少 file / entry / target），跳过');
     return;
   }
 
-  const label = `[${target}]`;
-
   // 平台判断
-  const supported = Array.isArray(platforms) && platforms.length > 0
-    ? platforms.includes(process.platform)
-    : true;
+  const label = `[${target}]`,
+    supported = Array.isArray(platforms) && platforms.length > 0 ? platforms.includes(process.platform) : true;
+
   if (!supported) {
     log(`${label} 当前系统（${process.platform}）不适用，跳过`);
     return;
   }
-
   // 单 asset 跳过开关
   if (envKey && process.env[`NODE_MOBILE_PREBUILT_${envKey}_SKIP`] === '1') {
     log(`${label} NODE_MOBILE_PREBUILT_${envKey}_SKIP=1，跳过`);
     return;
   }
-
   // 提示
-  if (hint && hintOn === process.platform) {
-    log(hint);
-  }
+  if (hint && hintOn === process.platform) log(hint);
 
-  const targetDir = path.join(packageRoot, target);
-  const versionFile = path.join(targetDir, '.flun-version');
-
+  const targetDir = path.join(packageRoot, target), versionFile = path.join(targetDir, '.flun-version');
   // 幂等
   if (fs.existsSync(versionFile)) {
     const installed = fs.readFileSync(versionFile, 'utf-8').trim();
@@ -127,8 +100,7 @@ async function processAsset(asset) {
   }
 
   // 下载
-  let buffer = null;
-  let lastError = null;
+  let buffer = null, lastError = null;
   for (const base of sources) {
     const url = `${base}/${targetVersion}/${file}`;
     log(`${label} 尝试从 ${url} 下载...`);
@@ -140,8 +112,7 @@ async function processAsset(asset) {
       log(`${label} 下载成功（${(buffer.length / 1024 / 1024).toFixed(1)} MB）`);
       break;
     } catch (e) {
-      lastError = e;
-      console.warn(`  [prebuilt] ${label} 该源失败：${e.message}`);
+      lastError = e, console.warn(`  [prebuilt] ${label} 该源失败：${e.message}`);
     }
   }
 
@@ -149,9 +120,7 @@ async function processAsset(asset) {
     console.error('');
     console.error(`  ⚠️  ${label} 从所有源下载均失败。`);
     console.error(`     请手动下载并覆盖到 ${target}/：`);
-    for (const base of sources) {
-      console.error(`       ${base}/${targetVersion}/${file}`);
-    }
+    for (const base of sources) console.error(`       ${base}/${targetVersion}/${file}`);
     if (lastError) console.error(`     最后错误：${lastError.message}`);
     console.error('');
     return;
@@ -184,3 +153,4 @@ async function processAsset(asset) {
 
   log(`${label} 已更新到 ${targetVersion}`);
 }
+for (const asset of assets) await processAsset(asset);

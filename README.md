@@ -31,13 +31,28 @@
 ```
 ---
 
+## 支持的系统与配置要求
+
+本包是 [`@flun/node-mobile-app`](https://www.npmjs.com/package/@flun/node-mobile-app) 与 [`@flun/nodejs-mobile-gyp`](https://www.npmjs.com/package/@flun/nodejs-mobile-gyp) 之间的中间层；完整的宿主平台与工具链要求见 gyp 的「[支持的系统与配置要求](https://github.com/OpenFlun/nodejs-mobile-gyp#支持的系统与配置要求)」。本包相关的要点：
+
+| 目标平台 | 宿主平台                | 额外要求                                                              |
+| -------- | ----------------------- | --------------------------------------------------------------------- |
+| Android  | Windows / macOS / Linux | Android NDK；Windows 上还需 Visual Studio 与 Git for Windows          |
+| iOS      | **仅 macOS**            | 完整 Xcode（Command Line Tools 单独不够）+ CocoaPods                  |
+
+- **Node.js**：最低版本见 `package.json` 的 `engines.node` 字段
+- **Python 3.6+**：gyp 构建时需要
+- **首次安装的预编译资源**：Android 与 iOS 的运行时二进制由 postinstall 自动下载，无需手动准备
+
+---
+
 ## 安装
 
 ```bash
 npm i @flun/nodejs-mobile-react-native
 ```
 
-iOS 需额外运行 `pod install` 链接原生代码:
+iOS 需运行 `pod install` 链接原生代码。通过 `@flun/node-mobile-app` 构建时 CLI 会自动执行，直接使用本包时需手动运行：
 
 ```bash
 cd ios && pod install
@@ -47,7 +62,7 @@ cd ios && pod install
 
 ### 首次安装的预编译资源下载
 
-本包的 npm tarball 只有 **1.2 MB**(仅代码), 不含预编译二进制; 安装后 postinstall 会自动从 Gitee / GitHub Release 拉取:
+本包的 npm tarball 仅含代码（不含预编译二进制），安装后 postinstall 会自动从 Gitee / GitHub Release 拉取：
 
 - **Android**:`android-libnode.zip` → 覆盖到 `android/libnode/`
 - **iOS**(仅 macOS):`ios-nodemobile.zip` → 覆盖到 `ios/NodeMobile.xcframework/`
@@ -58,7 +73,7 @@ cd ios && pod install
 
 ```bash
 # 覆盖当前版本(具体版本号请在 package.json 的 "prebuiltAssets" 查看)
-# 当前已编译的版本号(v18.20.4, v22.23.2)
+# 具体下载版本由 package.json 的 "prebuiltAssets.version" 决定;同一 tag 下 Android 与 iOS 附件的实际运行时版本可能不同
 NODE_MOBILE_PREBUILT_VERSION=你的目标版本号
 
 # 跳过全部下载
@@ -70,12 +85,12 @@ NODE_MOBILE_PREBUILT_IOS_SKIP=1
 
 ### Node.js 运行时能力对照
 
-Android 与 iOS 采用**各自独立**的 Node.js 运行时, 版本由 `package.json` 的 `prebuiltAssets` 字段决定(可通过环境变量 `NODE_MOBILE_PREBUILT_VERSION` 覆盖):
+Android 与 iOS 采用**各自独立**的 Node.js 运行时;下载哪个 Release tag 由 `package.json` 的 `prebuiltAssets.version` 决定(可用环境变量 `NODE_MOBILE_PREBUILT_VERSION` 覆盖), 但同一 tag 下 **Android 与 iOS 附件的实际运行时版本可能不同**——以最终下载到的产物为准:
 
 | 平台    | ICU              | Express          | 备注                        |
 | ------- | ---------------- | ---------------- | --------------------------- |
 | Android | 完整(full-icu) | 4.x / 5.x 均支持 | 支持 `\p{...}` Unicode 正则 |
-| iOS     | 无 ICU           | 仅 4.x           | 不支持 `\p{...}`            |
+| iOS     | 暂无 ICU           | 仅 4.x            | 不支持 `\p{...}`               |
 
 **关于 full-icu**:
 
@@ -95,7 +110,7 @@ Android 与 iOS 采用**各自独立**的 Node.js 运行时, 版本由 `package.
 ├── native.js                     # 实际桥接层:start / startWithArgs / startWithScript / channel, 通过NativeModules与原生通信
 ├── react-native.config.js        # RN CLI 配置: 指定 Android sourceDir 与 iOS 的 4 个 Script Phase
 ├── nodejs-mobile-react-native.podspec  # iOS Pod 配置(vendored NodeMobile.xcframework)
-├── package.json                  # type: module, postinstall 触发 scripts/create-node-structure.js
+├── package.json                  # type: module, postinstall 触发 create-node-structure.js 与 download-prebuilt-assets.js
 ├── CHANGELOG.md                  # 版本变更记录
 ├── LICENSE
 ├── README.md                     # 本文件
@@ -170,7 +185,7 @@ Android 与 iOS 采用**各自独立**的 Node.js 运行时, 版本由 `package.
 - 各 asset 独立处理, 已装版本匹配则跳过(不重复下载)
 - 全部下载失败时打印下载链接,**不会中断 npm 安装**, 可手动下载覆盖到对应目录
 
-**npm 包体积**:tarball 从 107 MB 降到 1.2 MB, 装包秒完成, 二进制随后拉取;
+**npm 包体积**：tarball 不含预编译二进制，装包很快，二进制随后拉取；
 
 > 需要覆盖版本 / 跳过下载等进阶操作, 见"开发者参考 → 预编译资源";
 
@@ -271,23 +286,23 @@ Node.js 运行时通过 Unix 风格的路径访问文件; Android 上, Node 项�
 
 #### 原生模块
 
-Windows / Linux / macOS 上均支持编译带原生代码的模块;
+Windows / Linux / macOS 上均支持编译 **Android** 原生模块;编译 **iOS** 原生模块则必须在 macOS 上进行;
 
 插件会扫描 `nodejs-project` 目录下的 `.gyp` 文件, 自动识别原生模块;
 
 **前置工具链**:
 
 - **Android**:需要 Android NDK; 插件会自动定位 NDK 并把工具链路径注入构建环境, 无需手动设置 `ANDROID_NDK_HOME`;
-- **iOS**:需要 Xcode Command Line Tools(仅 macOS);
+- **iOS**:需要**完整 Xcode**(仅 macOS;Command Line Tools 单独不够);
 - **Windows 额外需要**:Visual Studio(含「使用 C++ 的桌面开发」工作负载)与 Git for Windows(提供 make 所需的 POSIX 工具); 完整清单见 [@flun/nodejs-mobile-gyp 的系统要求](https://github.com/OpenFlun/nodejs-mobile-gyp#支持的系统与配置要求);
 
 **运行时版本与开发机的 Node 版本相互独立**:
 
-`prebuiltAssets.version` 指的是**移动端内置的 Node 运行时版本**, 与开发机安装的 Node 版本无关; 只要开发机的 Node 满足 `package.json` 的 `engines.node` 要求即可编译原生模块——产物的 ABI 由 NDK 与运行时自带的头文件决定, 开发机的 Node 仅用于驱动构建工具链;
+`prebuiltAssets.version` 指定的是**下载用的 Release tag**, 与开发机安装的 Node 版本无关;**同一 tag 下 Android 与 iOS 附件的实际运行时版本可能不同**(以产物为准);只要开发机的 Node 满足 `package.json` 的 `engines.node` 要求即可编译原生模块——产物的 ABI 由 NDK 与运行时自带的头文件决定, 开发机的 Node 仅用于驱动构建工具链;
 
 切换运行时版本请设置环境变量 `NODE_MOBILE_PREBUILT_VERSION`(详见「安装」章节);
 
-Android 上编译原生模块耗时较长(要为每个架构构建独立的 NDK 工具链); 编译产物 `.node` 会按架构分开打进应用, 运行时选择正确的那个;
+Android 上编译原生模块耗时较长(需为每个目标架构分别编译);编译产物 `.node` 会按架构分开打进应用, 运行时选择正确的那个;
 
 如果想手动控制开关, 可以创建 `nodejs-assets/BUILD_NATIVE_MODULES.txt`:
 
@@ -444,7 +459,7 @@ command = 'main.js --insecure-http-parser --zero-fill-buffers'
 
 | 名称                   | 类型      | 默认值 | 说明                                                 |
 | ---------------------- | --------- | ------ | ---------------------------------------------------- |
-| redirectOutputToLogcat | `boolean` | `true` | 是否把 Node 的 stdout/stderr 重定向到 Android logcat |
+| redirectOutputToLogcat | `boolean` | `true` | 是否把 Node 的 stdout/stderr 重定向到 Android logcat（仅 Android 有效） |
 
 ## Node 层 API(rn-bridge)
 
@@ -639,7 +654,7 @@ export default {
 - **minor**: 新增功能, 向后兼容
 - **patch**: 修复 Bug, 向后兼容
 
-与上游原版"跟随 Node 版本号"的策略不同, 本 fork 的版本号独立于 Node 版本——本 fork 基于的 Node 版本写在 `package.json` 的 `description` 与本文档中;
+与上游原版"跟随 Node 版本号"的策略不同, 本 fork 的版本号独立于 Node 版本;移动端实际使用的 Node 运行时版本由 `prebuiltAssets` 与下载到的产物决定, 见"安装"章节;
 
 ## 许可
 
