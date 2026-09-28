@@ -1,5 +1,10 @@
 # 变更日志
 
+## [2.0.6] - 2026-09-28 22:00
+### 修复
+
+- **子进程找不到 npm.cmd**：`BuildNpmModules` 任务里，部分依赖（如 `node` 包）的安装脚本会通过 shell 再调 `npm.cmd`，依赖 PATH 查找。原先任务构造的 PATH 只含 NDK 目录、用户项目 `.bin` 与系统 PATH，不含 Node 安装目录，导致 `'npm.cmd' is not recognized`。现把 `node.exe` 所在目录加入 PATH。
+
 ## [2.0.5] - 2026-09-28
 
 ### 修复
