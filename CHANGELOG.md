@@ -1,10 +1,18 @@
 # 变更日志
 
+## [2.0.5] - 2026-09-28
+
+### 修复
+
+- **`create-node-structure.js` 跳过逻辑失效，`nodejs-assets` 在应跳过时仍被生成**：两处原因叠加。
+  - **宿主包目录推断错误**：`hostPackageDir` 原先用 `lastIndexOf('node_modules')`。包被 hoist 到项目根 `node_modules` 时能正确落到用户项目根；但包被嵌套安装到 `@flun/node-mobile-app/node_modules/` 下时，`lastIndexOf` 会命中更深的那个 `node_modules`，得到的路径是 `@flun/node-mobile-app` 自身，其 `package.json` 不含 `@flun/node-mobile-app` 依赖，判断不命中。现改为 `indexOf('node_modules')` 取第一个 `node_modules`，hoist 与嵌套两种情况都落到真正的宿主项目根。
+  - **`npm i -D` 时 pkg.json 尚未写入**：`npm i -D @flun/node-mobile-app` 会在 postinstall 跑完之后才把新依赖写进 `package.json`，此时读宿主 `package.json` 无论如何都看不到 `@flun/node-mobile-app`，跳过逻辑必然失效（此前用 `npm i` 重装能跳过，就是因为依赖已在 pkg.json 里）。现除读 `package.json` 外，同时检查宿主项目 `node_modules/@flun/node-mobile-app` 是否存在，覆盖安装时序问题。
+
 ## [2.0.4] - 2026-09-28 14:54
 
 ### 修复
 
-- **`create-node-structure.js` 在嵌套安装下跳过逻辑失效**：`hostPackageDir` 原先用 `lastIndexOf('node_modules')` 定位宿主包目录。包被 hoist 到项目根 `node_modules` 时能正确落到用户项目根，检测到 `@flun/node-mobile-app` 依赖后跳过 `nodejs-assets` 复制；但当 npm 因版本冲突等原因把本包嵌套安装到 `@flun/node-mobile-app/node_modules/` 下时，`lastIndexOf` 会命中更深的那个 `node_modules`，得到的路径是 `@flun/node-mobile-app` 自身，其 `package.json` 不含 `@flun/node-mobile-app` 依赖，跳过逻辑失效，`nodejs-assets` 被复制到 `node_modules/@flun/node-mobile-app` 下而非宿主项目根，测试安装时观察到"未拦截"。现改为 `indexOf('node_modules')` 取第一个 `node_modules`，hoist 与嵌套两种情况都落到真正的宿主项目根。
+- **`create-node-structure.js` 在嵌套安装下跳过逻辑失效**：`hostPackageDir` 原先用 `lastIndexOf('node_modules')` 定位宿主包目录。包被 hoist 到项目根 `node_modules` 时能正确落到用户项目根；但包被嵌套安装到 `@flun/node-mobile-app/node_modules/` 下时，`lastIndexOf` 会命中更深的那个 `node_modules`，得到的路径是 `@flun/node-mobile-app` 自身，其 `package.json` 不含 `@flun/node-mobile-app` 依赖，判断不命中。现改为 `indexOf('node_modules')` 取第一个 `node_modules`，hoist 与嵌套两种情况都落到真正的宿主项目根。
 
 ## [2.0.3] - 2026-09-28 11:23
 ### 优化
