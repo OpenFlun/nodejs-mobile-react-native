@@ -59,17 +59,17 @@ const require = createRequire(import.meta.url), ncp = require('ncp'), __filename
     // 如果宿主项目依赖 @flun/node-mobile-app，说明本包是被它带下来的，
     // node-mobile-app 有自己的模板拷贝逻辑，此处跳过避免重复与误解。
     try {
-      const hostPkgPath = path.join(fileInstallingPackagePath, 'package.json');
-      const hasNmaDep = () => {
-        if (fs.existsSync(hostPkgPath)) {
-          const hostPkg = JSON.parse(fs.readFileSync(hostPkgPath, 'utf-8')),
-            allDeps = { ...(hostPkg.dependencies || {}), ...(hostPkg.devDependencies || {}) };
-          if (allDeps['@flun/node-mobile-app']) return true;
-        }
-        // pkg.json 尚未写入（npm i -D 会在 postinstall 之后才更新 pkg.json）时，
-        // 直接看宿主项目 node_modules 里是否已装 @flun/node-mobile-app
-        return fs.existsSync(path.join(fileInstallingPackagePath, 'node_modules', '@flun', 'node-mobile-app'));
-      };
+      const hostPkgPath = path.join(fileInstallingPackagePath, 'package.json'),
+        hasNmaDep = () => {
+          if (fs.existsSync(hostPkgPath)) {
+            const hostPkg = JSON.parse(fs.readFileSync(hostPkgPath, 'utf-8')),
+              allDeps = { ...(hostPkg.dependencies || {}), ...(hostPkg.devDependencies || {}) };
+            if (allDeps['@flun/node-mobile-app']) return true;
+          }
+          // pkg.json 尚未写入（npm i -D 会在 postinstall 之后才更新 pkg.json）时，
+          // 直接看宿主项目 node_modules 里是否已装 @flun/node-mobile-app
+          return fs.existsSync(path.join(fileInstallingPackagePath, 'node_modules', '@flun', 'node-mobile-app'));
+        };
       if (hasNmaDep()) {
         console.log('  [create-node-structure] 宿主项目依赖 @flun/node-mobile-app，跳过 nodejs-assets 复制');
         process.nextTick(() => done());
