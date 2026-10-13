@@ -49,10 +49,10 @@
     "LICENSE"
   ],
   "license": "ISC",
-  "homepage": "https://github.com/OpenFlun/nodejs-mobile-react-native",
+  "homepage": "https://github.com/OpenFlun/nodejs-mobile-react-native#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/OpenFlun/nodejs-mobile-react-native"
+    "url": "https://github.com/OpenFlun/nodejs-mobile-react-native.git"
   },
   "bugs": {
     "url": "https://github.com/OpenFlun/nodejs-mobile-react-native/issues"
