@@ -33,16 +33,16 @@
 
 ## 支持的系统与配置要求
 
-本包是 [`@flun/node-mobile-app`](https://www.npmjs.com/package/@flun/node-mobile-app) 与 [`@flun/nodejs-mobile-gyp`](https://www.npmjs.com/package/@flun/nodejs-mobile-gyp) 之间的中间层；完整的宿主平台与工具链要求见 gyp 的「[支持的系统与配置要求](https://github.com/OpenFlun/nodejs-mobile-gyp#支持的系统与配置要求)」。本包相关的要点：
+本包是 [`@flun/node-mobile-app`](https://www.npmjs.com/package/@flun/node-mobile-app) 与 [`@flun/nodejs-mobile-gyp`](https://www.npmjs.com/package/@flun/nodejs-mobile-gyp) 之间的中间层;完整的宿主平台与工具链要求见 gyp 的「[支持的系统与配置要求](https://github.com/OpenFlun/nodejs-mobile-gyp#支持的系统与配置要求)」.本包相关的要点:
 
 | 目标平台 | 宿主平台                | 额外要求                                                              |
 | -------- | ----------------------- | --------------------------------------------------------------------- |
-| Android  | Windows / macOS / Linux | Android NDK；Windows 上还需 Visual Studio 与 Git for Windows          |
-| iOS      | **仅 macOS**            | 完整 Xcode（Command Line Tools 单独不够）+ CocoaPods                  |
+| Android  | Windows / macOS / Linux | Android NDK;Windows 上还需 Visual Studio 与 Git for Windows          |
+| iOS      | **仅 macOS**            | 完整 Xcode(Command Line Tools 单独不够)+ CocoaPods                  |
 
-- **Node.js**：最低版本见 `package.json` 的 `engines.node` 字段
-- **Python 3.6+**：gyp 构建时需要
-- **首次安装的预编译资源**：Android 与 iOS 的运行时二进制由 postinstall 自动下载，无需手动准备
+- **Node.js**:最低版本见 `package.json` 的 `engines.node` 字段
+- **Python 3.6+**:gyp 构建时需要
+- **首次安装的预编译资源**:Android 与 iOS 的运行时二进制由 postinstall 自动下载,无需手动准备
 
 ---
 
@@ -52,7 +52,7 @@
 npm i @flun/nodejs-mobile-react-native
 ```
 
-iOS 需运行 `pod install` 链接原生代码。通过 `@flun/node-mobile-app` 构建时 CLI 会自动执行，直接使用本包时需手动运行：
+iOS 需运行 `pod install` 链接原生代码.通过 `@flun/node-mobile-app` 构建时 CLI 会自动执行,直接使用本包时需手动运行:
 
 ```bash
 cd ios && pod install
@@ -62,7 +62,7 @@ cd ios && pod install
 
 ### 首次安装的预编译资源下载
 
-本包的 npm tarball 仅含代码（不含预编译二进制），安装后 postinstall 会自动从 Gitee / GitHub Release 拉取：
+本包的 npm tarball 仅含代码(不含预编译二进制),安装后 postinstall 会自动从 Gitee / GitHub Release 拉取:
 
 - **Android**:`android-libnode.zip` → 覆盖到 `android/libnode/`
 - **iOS**(仅 macOS):`ios-nodemobile.zip` → 覆盖到 `ios/NodeMobile.xcframework/`
@@ -85,7 +85,7 @@ NODE_MOBILE_PREBUILT_IOS_SKIP=1
 
 ### Node.js 运行时能力对照
 
-Android 与 iOS 采用**各自独立**的 Node.js 运行时;下载哪个 Release tag 由 `package.json` 的 `prebuiltAssets.version` 决定(可用环境变量 `NODE_MOBILE_PREBUILT_VERSION` 覆盖), 但同一 tag 下 **Android 与 iOS 附件的实际运行时版本可能不同**——以最终下载到的产物为准:
+Android 与 iOS 采用**各自独立**的 Node.js 运行时;下载哪个 Release tag 由 `package.json` 的 `prebuiltAssets.version` 决定(可用环境变量 `NODE_MOBILE_PREBUILT_VERSION` 覆盖), 但同一 tag 下 **Android 与 iOS 附件的实际运行时版本可能不同**--以最终下载到的产物为准:
 
 | 平台    | ICU              | Express          | 备注                        |
 | ------- | ---------------- | ---------------- | --------------------------- |
@@ -116,7 +116,7 @@ Android 与 iOS 采用**各自独立**的 Node.js 运行时;下载哪个 Release
 ├── README.md                     # 本文件
 │
 ├── android/                      # Android 原生工程
-│   ├── build.gradle              # gyp 路径探测、abiFilters、NDK 工具链注入、Windows 适配(cmd / sh.exe / 正斜杠)
+│   ├── build.gradle              # gyp 路径探测,abiFilters,NDK 工具链注入,Windows 适配(cmd / sh.exe / 正斜杠)
 │   ├── CMakeLists.txt            # 编译 rn-bridge.cpp + native-lib.cpp
 │   └── src/main/
 │       ├── AndroidManifest.xml
@@ -185,7 +185,7 @@ Android 与 iOS 采用**各自独立**的 Node.js 运行时;下载哪个 Release
 - 各 asset 独立处理, 已装版本匹配则跳过(不重复下载)
 - 全部下载失败时打印下载链接,**不会中断 npm 安装**, 可手动下载覆盖到对应目录
 
-**npm 包体积**：tarball 不含预编译二进制，装包很快，二进制随后拉取；
+**npm 包体积**:tarball 不含预编译二进制,装包很快,二进制随后拉取;
 
 > 需要覆盖版本 / 跳过下载等进阶操作, 见"开发者参考 → 预编译资源";
 
@@ -204,13 +204,13 @@ Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE)
 
 **根因**: 早期 v22 `libnode.so` 内置的 CJS loader 补丁按 `rn-bridge/index.js` 硬编码定位入口; 本包因 `type: module` 已把入口改名为 `index.cjs`, 补丁匹配失败, Node 回退到 `process._linkedBinding('rn_bridge')` 拿裸 native binding(只有 `sendMessage` / `registerChannel` / `getDataDir`, 没有 `channel` 属性), 触发崩溃;
 
-**方案**:v22 适配包的 CJS loader 补丁改为按**目录** `rn-bridge` 定位, 入口文件名交给该目录 `package.json` 的 `main` 字段解析——无论入口叫 `index.js` / `index.cjs` / `index.mjs` 还是其它, 都能正确加载;
+**方案**:v22 适配包的 CJS loader 补丁改为按**目录** `rn-bridge` 定位, 入口文件名交给该目录 `package.json` 的 `main` 字段解析--无论入口叫 `index.js` / `index.cjs` / `index.mjs` 还是其它, 都能正确加载;
 
 **结论**:rn-bridge 作为 native binding 的 JS 包装, 必须走 CJS;
 
 #### 2. 为什么用 `.cjs` 而不是 `.js`
 
-本包整体是 `type: module`, 普通的 `.js` 会被按 ESM 解析;`.cjs` 后缀是 Node 官方约定的 CommonJS 强制后缀,**优先级高于包 `type`**——无论引用方是 CJS 还是 ESM 项目, Node 都用 CJS loader 加载 `index.cjs`;
+本包整体是 `type: module`, 普通的 `.js` 会被按 ESM 解析;`.cjs` 后缀是 Node 官方约定的 CommonJS 强制后缀,**优先级高于包 `type`**--无论引用方是 CJS 还是 ESM 项目, Node 都用 CJS loader 加载 `index.cjs`;
 
 因此:
 
@@ -230,7 +230,7 @@ Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE)
 
 原版把 `react-native` 声明为强制 peer, npm 7+ 会自动安装 peer, 造成重复安装;
 
-本包将其标记为 `peerDependenciesMeta.optional`, 避免用户项目里重复装 RN——`react-native` 由 `@flun/node-mobile-app` 的 `dependencies` 提供, 不会缺失;
+本包将其标记为 `peerDependenciesMeta.optional`, 避免用户项目里重复装 RN--`react-native` 由 `@flun/node-mobile-app` 的 `dependencies` 提供, 不会缺失;
 
 ## 使用
 
@@ -298,7 +298,7 @@ Windows / Linux / macOS 上均支持编译 **Android** 原生模块;编译 **iOS
 
 **运行时版本与开发机的 Node 版本相互独立**:
 
-`prebuiltAssets.version` 指定的是**下载用的 Release tag**, 与开发机安装的 Node 版本无关;**同一 tag 下 Android 与 iOS 附件的实际运行时版本可能不同**(以产物为准);只要开发机的 Node 满足 `package.json` 的 `engines.node` 要求即可编译原生模块——产物的 ABI 由 NDK 与运行时自带的头文件决定, 开发机的 Node 仅用于驱动构建工具链;
+`prebuiltAssets.version` 指定的是**下载用的 Release tag**, 与开发机安装的 Node 版本无关;**同一 tag 下 Android 与 iOS 附件的实际运行时版本可能不同**(以产物为准);只要开发机的 Node 满足 `package.json` 的 `engines.node` 要求即可编译原生模块--产物的 ABI 由 NDK 与运行时自带的头文件决定, 开发机的 Node 仅用于驱动构建工具链;
 
 切换运行时版本请设置环境变量 `NODE_MOBILE_PREBUILT_VERSION`(详见「安装」章节);
 
@@ -459,7 +459,7 @@ command = 'main.js --insecure-http-parser --zero-fill-buffers'
 
 | 名称                   | 类型      | 默认值 | 说明                                                 |
 | ---------------------- | --------- | ------ | ---------------------------------------------------- |
-| redirectOutputToLogcat | `boolean` | `true` | 是否把 Node 的 stdout/stderr 重定向到 Android logcat（仅 Android 有效） |
+| redirectOutputToLogcat | `boolean` | `true` | 是否把 Node 的 stdout/stderr 重定向到 Android logcat(仅 Android 有效) |
 
 ## Node 层 API(rn-bridge)
 

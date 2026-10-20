@@ -16,9 +16,9 @@ apply plugin: 'com.android.library'
 def _nodeTargetSdkVersion = ((rootProject?.ext?.properties?.targetSdkVersion) ?: 30)
 def _nodeMinSdkVersion = ((rootProject?.ext?.properties?.minSdkVersion) ?: 24)
 def _compileNativeModulesSdkVersion = _nodeMinSdkVersion;
-// 移动端内置的 Node 运行时版本——仅用于诊断输出，不限制开发机的 Node 版本。
-// 优先读环境变量 NODE_MOBILE_PREBUILT_VERSION（用户切换产物时设置），
-// 否则读 package.json 的 prebuiltAssets.version，最后兜底。
+// 移动端内置的 Node 运行时版本--仅用于诊断输出,不限制开发机的 Node 版本.
+// 优先读环境变量 NODE_MOBILE_PREBUILT_VERSION(用户切换产物时设置),
+// 否则读 package.json 的 prebuiltAssets.version,最后兜底.
 def _runtimeVersionFull = System.getenv('NODE_MOBILE_PREBUILT_VERSION')
 if (!_runtimeVersionFull) {
     _runtimeVersionFull = 'v22.23.2'
@@ -30,6 +30,10 @@ if (!_runtimeVersionFull) {
         }
     } catch (ignored) { }
 }
+// npm 构建日志:test 模式(NODE_MOBILE_MODE=test)输出详细日志与进度条;其它模式仅错误,禁进度条
+def _isTestMode = System.getenv('NODE_MOBILE_MODE') == 'test'
+def _npmLogLevel = _isTestMode ? 'verbose' : 'error'
+def _npmProgressArgs = _isTestMode ? [] : ['--no-progress']
 if (_compileNativeModulesSdkVersion<24) {
     // 24 is the minimum sdk version Node is built with.
     _compileNativeModulesSdkVersion=24;
@@ -201,8 +205,8 @@ if ("1".equals(shouldRebuildNativeModules)) {
     String npmCommandName = 'npm';
     String nodeCommandName = 'node';
     if (OperatingSystem.current().isWindows()) {
-        // Windows 下 npm 是 npm.cmd；Gradle exec 不做 PATHEXT 补全，
-        // 且任务 PATH 不一定包含 node 目录。因此通过 node 的绝对路径定位 npm.cmd。
+        // Windows 下 npm 是 npm.cmd;Gradle exec 不做 PATHEXT 补全,
+        // 且任务 PATH 不一定包含 node 目录.因此通过 node 的绝对路径定位 npm.cmd.
         def _npmNodeOut = new ByteArrayOutputStream()
         def _npmNodeResult = project.services.get(org.gradle.process.ExecOperations).exec {
             commandLine 'node', '-p', 'process.execPath'
@@ -218,7 +222,7 @@ if ("1".equals(shouldRebuildNativeModules)) {
                 npmCommandName = 'npm.cmd'
             }
         }
-        nodeCommandName = _npmNodeOut.toString().trim();  // 绝对路径，避免任务 PATH 缺失
+        nodeCommandName = _npmNodeOut.toString().trim();  // 绝对路径,避免任务 PATH 缺失
     }
     if (OperatingSystem.current().isMacOsX()) {
         // On macOS, npm's and node's locations may not be in the PATH environment variable if gradle is being run
@@ -292,6 +296,8 @@ if ("1".equals(shouldRebuildNativeModules)) {
                     break
             }
         }()
+        // 由 @flun/node-mobile-app 写入的已编译标记;存在时启用编译前移相关逻辑
+        def _nativeBuilt = file("${rootProject.projectDir}/../nodejs-assets/.native-built-${abi_name}")
         String temp_cc_ver = '4.9';
         String temp_dest_cpu;
         String temp_v8_arch;
@@ -339,7 +345,7 @@ if ("1".equals(shouldRebuildNativeModules)) {
 
         String ndk_bundle_path = android.ndkDirectory
         String toolchain_path = "${ndk_bundle_path}/toolchains/llvm/prebuilt/${temp_host_tag}"
-        // Windows 的 NDK clang 包装脚本为 .cmd，llvm-ar / llvm-ranlib 为 .exe
+        // Windows 的 NDK clang 包装脚本为 .cmd,llvm-ar / llvm-ranlib 为 .exe
         String _toolSuffix = OperatingSystem.current().isWindows() ? '.cmd' : ''
         String _binSuffix = OperatingSystem.current().isWindows() ? '.exe' : ''
         String npm_toolchain_ar = "${toolchain_path}/bin/llvm-ar${_binSuffix}"
@@ -357,14 +363,14 @@ if ("1".equals(shouldRebuildNativeModules)) {
         } else if (OperatingSystem.current().isLinux()) {
             npm_gyp_defines += " host_os=linux OS=android"
         } else if (OperatingSystem.current().isWindows()) {
-            // gyp 的 make-android 生成器无 windows 宿主概念，复用 linux
+            // gyp 的 make-android 生成器无 windows 宿主概念,复用 linux
             npm_gyp_defines += " host_os=linux OS=android"
         } else {
             throw new GradleException("Unsupported opperating system for nodejs-mobile native builds: ${OperatingSystem.current().getName()}")
         }
 
-        // common.gypi 在 OS==android 分支引用 <(android_ndk_path)/sources/android/cpufeatures，
-        // 若变量未定义 gyp 会在解析阶段直接报错。这里传入 NDK 路径（正斜杠）。
+        // common.gypi 在 OS==android 分支引用 <(android_ndk_path)/sources/android/cpufeatures,
+        // 若变量未定义 gyp 会在解析阶段直接报错.这里传入 NDK 路径(正斜杠).
         npm_gyp_defines += " android_ndk_path=" + ndk_bundle_path.replace('\\', '/')
 
         task "CopyNodeProjectAssets${abi_name}" {
@@ -414,6 +420,7 @@ if ("1".equals(shouldRebuildNativeModules)) {
             delete fileTree(dir: "${rootProject.buildDir}/nodejs-native-assets-temp-build/nodejs-native-assets-${abi_name}/nodejs-project/node_modules/").matching {
                 include "**/*.node" // Look for all .node files
                 exclude "**/prebuilds/android-${temp_arch}/*" // Don't touch the correct prebuilds
+                if (_nativeBuilt.exists()) exclude "**/build/Release/*.node" // 仅编译前移场景保留 JS 侧编译产物
             }
         }
 
@@ -430,6 +437,13 @@ if ("1".equals(shouldRebuildNativeModules)) {
                 for (dotNode in correctDotNodes) {
                     def moduleRoot = file("${dotNode.getAbsoluteFile()}/../../..")
                     def moduleName = moduleRoot.getName()
+                    def _releaseDir = file("${moduleRoot}/build/Release")
+                    def _built = _nativeBuilt.exists() && _releaseDir.exists() && (_releaseDir.listFiles()?.any { it.name.endsWith(".node") } ?: false)
+                    if (_built) {
+                        println "Skipping prebuild for ${moduleName} (already compiled by JS)"
+                        delete "${moduleRoot}/prebuilds"
+                        continue
+                    }
                     println "Preparing to use the prebuild in ${moduleName}"
                     delete "${moduleRoot}/build"
                     copy {
@@ -447,10 +461,11 @@ if ("1".equals(shouldRebuildNativeModules)) {
         }
 
         task "BuildNpmModules${abi_name}" (type:Exec) {
+            enabled = !_nativeBuilt.exists()
             dependsOn "DetectCorrectPrebuilds${abi_name}"
             description = "Building native modules for ${abi_name}."
-            // 仅打印诊断信息：开发机的 Node 版本与移动端运行时版本相互独立，
-            // 前者不必对齐后者。产物 ABI 由 NDK + 运行时自带的头文件决定。
+            // 仅打印诊断信息:开发机的 Node 版本与移动端运行时版本相互独立,
+            // 前者不必对齐后者.产物 ABI 由 NDK + 运行时自带的头文件决定.
             def nodeVersionStdout = new ByteArrayOutputStream()
             def nodeVersionResult = project.services.get(org.gradle.process.ExecOperations).exec {
                 commandLine 'node', '-p', "process.versions.node.split('.')[0]"
@@ -464,9 +479,9 @@ if ("1".equals(shouldRebuildNativeModules)) {
             outputs.dir "${rootProject.buildDir}/nodejs-native-assets-temp-build/nodejs-native-assets-${abi_name}/nodejs-project/"
             workingDir "${rootProject.buildDir}/nodejs-native-assets-temp-build/nodejs-native-assets-${abi_name}/nodejs-project/"
 
-            // 通过 Node 模块解析定位 @flun/nodejs-mobile-gyp，而不是猜目录层级。
-            // 这样在 npm / yarn / pnpm / workspaces / 嵌套安装 下都能正确解析，
-            // 且不会静默命中未加 scope 的上游同名包。
+            // 通过 Node 模块解析定位 @flun/nodejs-mobile-gyp,而不是猜目录层级.
+            // 这样在 npm / yarn / pnpm / workspaces / 嵌套安装 下都能正确解析,
+            // 且不会静默命中未加 scope 的上游同名包.
             String npm_gyp_path_to_use;
             def gypPathOut = new ByteArrayOutputStream()
             def gypPathErr = new ByteArrayOutputStream()
@@ -495,9 +510,9 @@ if ("1".equals(shouldRebuildNativeModules)) {
             // to correctly build some modules that depend on symlinked modules,
             // like node-pre-gyp.
             def pathParts = []
-            // 把 Node 所在目录加入 PATH：
-            // 子进程（如 npm 的 install 脚本）通过 shell 调用 npm.cmd / node 时，
-            // 依赖 PATH 查找，而不仅仅是任务本身的 commandLine。
+            // 把 Node 所在目录加入 PATH:
+            // 子进程(如 npm 的 install 脚本)通过 shell 调用 npm.cmd / node 时,
+            // 依赖 PATH 查找,而不仅仅是任务本身的 commandLine.
             if (OperatingSystem.current().isWindows()) {
                 try {
                     def _nodeExeFile = new File(nodeCommandName)
@@ -507,7 +522,7 @@ if ("1".equals(shouldRebuildNativeModules)) {
                 } catch (ignored) { }
             }
             if (OperatingSystem.current().isWindows()) {
-                // Windows 宿主无系统 make，用 NDK 自带的 make.exe
+                // Windows 宿主无系统 make,用 NDK 自带的 make.exe
                 pathParts.add("${ndk_bundle_path}/prebuilt/windows-x86_64/bin")
             }
             String original_project_bin = "${rootProject.projectDir}/../nodejs-assets/nodejs-project/node_modules/.bin";
@@ -531,11 +546,11 @@ if ("1".equals(shouldRebuildNativeModules)) {
             environment ('RANLIB', "${npm_toolchain_ranlib}")
             environment ('GYP_DEFINES', "${npm_gyp_defines}")
 
-            // Windows 的 .cmd 脚本必须经 cmd.exe 执行；Gradle exec 不套 shell
+            // Windows 的 .cmd 脚本必须经 cmd.exe 执行;Gradle exec 不套 shell
             if (OperatingSystem.current().isWindows()) {
-                commandLine 'cmd', '/c', npmCommandName, '--verbose', '--foreground-scripts', 'rebuild', '--build-from-source'
+                commandLine 'cmd', '/c', npmCommandName, *_npmProgressArgs, "--loglevel=${_npmLogLevel}", '--foreground-scripts', 'rebuild', '--build-from-source'
             } else {
-                commandLine npmCommandName, '--verbose', '--foreground-scripts', 'rebuild', '--build-from-source'
+                commandLine npmCommandName, *_npmProgressArgs, "--loglevel=${_npmLogLevel}", '--foreground-scripts', 'rebuild', '--build-from-source'
             }
         }
 

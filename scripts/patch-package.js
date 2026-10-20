@@ -4,9 +4,9 @@ import { createRequire } from 'module'
 
 const require_ = createRequire(import.meta.url),
   /**
-   * 补丁 package.json：某些模块的 binary 字段带运行时变量替换，
-   * 但移动端交叉编译时，build 期与 runtime 的取值不同，
-   * 因此提前用固定值替换掉。
+   * 补丁 package.json:某些模块的 binary 字段带运行时变量替换,
+   * 但移动端交叉编译时,build 期与 runtime 的取值不同,
+   * 因此提前用固定值替换掉.
    */
   patchPackageJSON_preNodeGyp_modulePath = packageJSONPath => {
     const packageJSONReadData = fs.readFileSync(packageJSONPath), packageJSON = JSON.parse(packageJSONReadData);
@@ -24,11 +24,11 @@ const require_ = createRequire(import.meta.url),
     fs.writeFileSync(packageJSONPath, packageJSONWriteData);
   },
   /**
-   * npm 7+ 起，环境变量 npm_config_node_gyp（scripts/ios-build-native-modules.sh 依赖它）
-   * 不再传给 package scripts。因此这里逐个模块补丁 package.json，
-   * 把 node-gyp-build 替换为我们的分支 node-gyp-build-mobile。
-   * 该分支读取另一个环境变量（由 scripts/ios-build-native-modules.sh 设置），
-   * 指向 nodejs-mobile-gyp。
+   * npm 7+ 起,环境变量 npm_config_node_gyp(scripts/ios-build-native-modules.sh 依赖它)
+   * 不再传给 package scripts.因此这里逐个模块补丁 package.json,
+   * 把 node-gyp-build 替换为我们的分支 node-gyp-build-mobile.
+   * 该分支读取另一个环境变量(由 scripts/ios-build-native-modules.sh 设置),
+   * 指向 nodejs-mobile-gyp.
    */
   patchPackageJSONNodeGypBuild = packageJSONPath => {
     let gypBuildMobileBin, packageJSON;
@@ -77,4 +77,4 @@ if (process.argv.length >= 3) {
   if (fs.existsSync(process.argv[2])) visitPackageJSON(process.argv[2]);
   process.exit(0);
 }
-else console.error('需要传入一个路径参数。'), process.exit(1);
+else console.error('需要传入一个路径参数.'), process.exit(1);

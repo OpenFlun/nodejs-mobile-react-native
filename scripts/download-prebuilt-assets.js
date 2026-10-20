@@ -1,7 +1,7 @@
 /**
- * postinstall：从 Gitee / GitHub Release 下载预编译资源并替换到对应目录
+ * postinstall:从 Gitee / GitHub Release 下载预编译资源并替换到对应目录
  *
- * 读取 package.json 的 prebuiltAssets 字段：
+ * 读取 package.json 的 prebuiltAssets 字段:
  *   {
  *     "version": "v18.20.4",
  *     "sources": [
@@ -28,18 +28,18 @@
  *     ]
  *   }
  *
- * 环境变量：
- *   NODE_MOBILE_PREBUILT_VERSION              覆盖默认版本（如 v22.23.2）
+ * 环境变量:
+ *   NODE_MOBILE_PREBUILT_VERSION              覆盖默认版本(如 v22.23.2)
  *   NODE_MOBILE_PREBUILT_SKIP=1               跳过全部下载
- *   NODE_MOBILE_PREBUILT_<envKey>_SKIP=1      跳过指定 asset（如 _ANDROID_SKIP / _IOS_SKIP）
+ *   NODE_MOBILE_PREBUILT_<envKey>_SKIP=1      跳过指定 asset(如 _ANDROID_SKIP / _IOS_SKIP)
  *
- * 行为：
+ * 行为:
  *   - platforms 不匹配当前系统 → 跳过该 asset
  *   - 有 hintOn 匹配当前系统且未跳过 → 打印 hint
- *   - 每个 asset 独立处理，各自维护 .flun-version 标记
+ *   - 每个 asset 独立处理,各自维护 .flun-version 标记
  *   - 已装版本 == 目标版本 → 跳过
- *   - 按 sources 顺序尝试下载，第一个成功即停
- *   - 单个 asset 全部源失败 → 打印下载链接，但不中断 npm 安装
+ *   - 按 sources 顺序尝试下载,第一个成功即停
+ *   - 单个 asset 全部源失败 → 打印下载链接,但不中断 npm 安装
  */
 
 import fs from 'fs';
@@ -51,15 +51,15 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url)), packageRoot = pa
   tmpDir = path.join(packageRoot, '.prebuilt-tmp'), log = (...a) => console.log('  [prebuilt]', ...a);
 
 // 全局跳过
-if (process.env.NODE_MOBILE_PREBUILT_SKIP === '1') log('NODE_MOBILE_PREBUILT_SKIP=1，跳过'), process.exit(0);
+if (process.env.NODE_MOBILE_PREBUILT_SKIP === '1') log('NODE_MOBILE_PREBUILT_SKIP=1,跳过'), process.exit(0);
 
 // 本地开发保护
 if (process.env.INIT_CWD && path.resolve(process.env.INIT_CWD) === path.resolve(packageRoot))
-  log('检测到本地开发场景，跳过'), process.exit(0);
+  log('检测到本地开发场景,跳过'), process.exit(0);
 
 // 读 package.json
 const pkg = JSON.parse(fs.readFileSync(path.join(packageRoot, 'package.json'), 'utf-8')), cfg = pkg.prebuiltAssets;
-if (!cfg) log('package.json 未配置 prebuiltAssets 字段，跳过'), process.exit(0);
+if (!cfg) log('package.json 未配置 prebuiltAssets 字段,跳过'), process.exit(0);
 
 const targetVersion = process.env.NODE_MOBILE_PREBUILT_VERSION || cfg.version,
   sources = cfg.sources || [], assets = cfg.assets || [];
@@ -69,7 +69,7 @@ if (!targetVersion || sources.length === 0 || assets.length === 0) log('prebuilt
 const processAsset = async asset => {
   const { file, entry, target, platforms, envKey, hintOn, hint } = asset;
   if (!file || !entry || !target) {
-    log('asset 配置不完整（缺少 file / entry / target），跳过');
+    log('asset 配置不完整(缺少 file / entry / target),跳过');
     return;
   }
 
@@ -78,12 +78,12 @@ const processAsset = async asset => {
     supported = Array.isArray(platforms) && platforms.length > 0 ? platforms.includes(process.platform) : true;
 
   if (!supported) {
-    log(`${label} 当前系统（${process.platform}）不适用，跳过`);
+    log(`${label} 当前系统(${process.platform})不适用,跳过`);
     return;
   }
   // 单 asset 跳过开关
   if (envKey && process.env[`NODE_MOBILE_PREBUILT_${envKey}_SKIP`] === '1') {
-    log(`${label} NODE_MOBILE_PREBUILT_${envKey}_SKIP=1，跳过`);
+    log(`${label} NODE_MOBILE_PREBUILT_${envKey}_SKIP=1,跳过`);
     return;
   }
   // 提示
@@ -94,7 +94,7 @@ const processAsset = async asset => {
   if (fs.existsSync(versionFile)) {
     const installed = fs.readFileSync(versionFile, 'utf-8').trim();
     if (installed === targetVersion) {
-      log(`${label} 已是最新版本 ${targetVersion}，跳过`);
+      log(`${label} 已是最新版本 ${targetVersion},跳过`);
       return;
     }
   }
@@ -109,19 +109,19 @@ const processAsset = async asset => {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const ab = await res.arrayBuffer();
       buffer = Buffer.from(ab);
-      log(`${label} 下载成功（${(buffer.length / 1024 / 1024).toFixed(1)} MB）`);
+      log(`${label} 下载成功(${(buffer.length / 1024 / 1024).toFixed(1)} MB)`);
       break;
     } catch (e) {
-      lastError = e, console.warn(`  [prebuilt] ${label} 该源失败：${e.message}`);
+      lastError = e, console.warn(`  [prebuilt] ${label} 该源失败:${e.message}`);
     }
   }
 
   if (!buffer) {
     console.error('');
-    console.error(`  ⚠️  ${label} 从所有源下载均失败。`);
-    console.error(`     请手动下载并覆盖到 ${target}/：`);
+    console.error(`  ⚠️  ${label} 从所有源下载均失败.`);
+    console.error(`     请手动下载并覆盖到 ${target}/:`);
     for (const base of sources) console.error(`       ${base}/${targetVersion}/${file}`);
-    if (lastError) console.error(`     最后错误：${lastError.message}`);
+    if (lastError) console.error(`     最后错误:${lastError.message}`);
     console.error('');
     return;
   }
@@ -132,14 +132,14 @@ const processAsset = async asset => {
   try {
     new AdmZip(buffer).extractAllTo(tmpDir, true);
   } catch (e) {
-    console.error(`  [prebuilt] ${label} 解压失败：${e.message}`);
+    console.error(`  [prebuilt] ${label} 解压失败:${e.message}`);
     fs.rmSync(tmpDir, { recursive: true, force: true });
     return;
   }
 
   const extracted = path.join(tmpDir, entry);
   if (!fs.existsSync(extracted)) {
-    console.error(`  [prebuilt] ${label} 解压后未找到 ${entry}/ 目录，zip 结构异常`);
+    console.error(`  [prebuilt] ${label} 解压后未找到 ${entry}/ 目录,zip 结构异常`);
     fs.rmSync(tmpDir, { recursive: true, force: true });
     return;
   }
