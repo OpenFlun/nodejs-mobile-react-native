@@ -1,4 +1,4 @@
-# 默认：文本文件，仓库内统一 LF
+# 默认:文本文件,仓库内统一 LF
 * text=auto eol=lf
 # 源码
 *.js    text eol=lf
@@ -33,13 +33,13 @@ gradlew        text eol=lf
 *.cpp  text eol=lf
 *.h    text eol=lf
 *.hpp  text eol=lf
-# Unix shell 脚本：必须 LF
+# Unix shell 脚本:必须 LF
 *.sh   text eol=lf
-# Windows 专属脚本：CRLF
+# Windows 专属脚本:CRLF
 *.bat  text eol=crlf
 *.cmd  text eol=crlf
 *.ps1  text eol=crlf
-# 二进制文件（不做换行符转换）
+# 二进制文件(不做换行符转换)
 *.so       binary
 *.a        binary
 *.o        binary

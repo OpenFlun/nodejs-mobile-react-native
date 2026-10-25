@@ -316,7 +316,8 @@ SKM_DEFINE_STACK_OF_INTERNAL(BIO, BIO, BIO)
 #define sk_BIO_unshift(sk, ptr) OPENSSL_sk_unshift(ossl_check_BIO_sk_type(sk), ossl_check_BIO_type(ptr))
 #define sk_BIO_pop(sk) ((BIO *)OPENSSL_sk_pop(ossl_check_BIO_sk_type(sk)))
 #define sk_BIO_shift(sk) ((BIO *)OPENSSL_sk_shift(ossl_check_BIO_sk_type(sk)))
-#define sk_BIO_pop_free(sk, freefunc) OPENSSL_sk_pop_free(ossl_check_BIO_sk_type(sk),ossl_check_BIO_freefunc_type(freefunc))
+#define sk_BIO_pop_free(sk, freefunc) \
+        OPENSSL_sk_pop_free(ossl_check_BIO_sk_type(sk),ossl_check_BIO_freefunc_type(freefunc))
 #define sk_BIO_insert(sk, ptr, idx) OPENSSL_sk_insert(ossl_check_BIO_sk_type(sk), ossl_check_BIO_type(ptr), (idx))
 #define sk_BIO_set(sk, idx, ptr) ((BIO *)OPENSSL_sk_set(ossl_check_BIO_sk_type(sk), (idx), ossl_check_BIO_type(ptr)))
 #define sk_BIO_find(sk, ptr) OPENSSL_sk_find(ossl_check_BIO_sk_type(sk), ossl_check_BIO_type(ptr))
@@ -325,8 +326,10 @@ SKM_DEFINE_STACK_OF_INTERNAL(BIO, BIO, BIO)
 #define sk_BIO_sort(sk) OPENSSL_sk_sort(ossl_check_BIO_sk_type(sk))
 #define sk_BIO_is_sorted(sk) OPENSSL_sk_is_sorted(ossl_check_const_BIO_sk_type(sk))
 #define sk_BIO_dup(sk) ((STACK_OF(BIO) *)OPENSSL_sk_dup(ossl_check_const_BIO_sk_type(sk)))
-#define sk_BIO_deep_copy(sk, copyfunc, freefunc) ((STACK_OF(BIO) *)OPENSSL_sk_deep_copy(ossl_check_const_BIO_sk_type(sk), ossl_check_BIO_copyfunc_type(copyfunc), ossl_check_BIO_freefunc_type(freefunc)))
-#define sk_BIO_set_cmp_func(sk, cmp) ((sk_BIO_compfunc)OPENSSL_sk_set_cmp_func(ossl_check_BIO_sk_type(sk), ossl_check_BIO_compfunc_type(cmp)))
+#define sk_BIO_deep_copy(sk, copyfunc, freefunc) ((STACK_OF(BIO) *)OPENSSL_sk_deep_copy(ossl_check_const_BIO_sk_type(sk), \
+        ossl_check_BIO_copyfunc_type(copyfunc), ossl_check_BIO_freefunc_type(freefunc)))
+#define sk_BIO_set_cmp_func(sk, cmp) ((sk_BIO_compfunc)OPENSSL_sk_set_cmp_func(ossl_check_BIO_sk_type(sk), \
+        ossl_check_BIO_compfunc_type(cmp)))
 
 
 

@@ -54,8 +54,8 @@ Thumbs.db
 # libnode 下载临时目录
 .libnode-tmp/
 
-# Android libnode：不进 git，装包时由 postinstall 下载
+# Android libnode:不进 git,装包时由 postinstall 下载
 android/libnode/
 
-# iOS NodeMobile：不进 git，走 Release 附件下载
+# iOS NodeMobile:不进 git,走 Release 附件下载
 ios/NodeMobile.xcframework/

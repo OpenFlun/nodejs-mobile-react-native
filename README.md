@@ -2,9 +2,11 @@
 
 为 React Native 应用提供完整的 Node.js; 让 Node.js 服务端代码与 React Native 前端运行于同一进程的不同线程, 双向通信;
 
-基于 [nodejs-mobile-react-native](https://github.com/nodejs-mobile/nodejs-mobile-react-native) 的 flun fork; Android 与 iOS 各自内置独立的 Node.js 运行时(版本对照见"安装"章节);
+基于 [nodejs-mobile-react-native](https://github.com/nodejs-mobile/nodejs-mobile-react-native) 的 flun fork; Android 与 
+iOS 各自内置独立的 Node.js 运行时(版本对照见"安装"章节);
 
-可直接用于任何 React Native 项目, 也可由 [`@flun/node-mobile-app`](https://www.npmjs.com/package/@flun/node-mobile-app) 在构建时自动调用;
+可直接用于任何 React Native 项目, 也可由 [`@flun/node-mobile-app`](https://www.npmjs.com/package/@flun/node-mobile-app) 
+在构建时自动调用;
 
 - GitHub: https://github.com/OpenFlun/nodejs-mobile-react-native
 - Gitee: https://gitee.com/OpenFlun/nodejs-mobile-react-native
@@ -16,7 +18,8 @@
 
 ### 允许安装脚本执行
 
-本包在安装时可能触发某些依赖包的自动脚本(如 `postinstall` 等); 如果你的 npm 全局配置或项目配置禁止了脚本执行(例如设置了 `ignore-scripts=true`), 可能会导致安装不完整或运行时异常;
+本包在安装时可能触发某些依赖包的自动脚本(如 `postinstall` 等); 如果你的 npm 全局配置或项目配置禁止了脚本执行(例如设置了 
+`ignore-scripts=true`), 可能会导致安装不完整或运行时异常;
 
 推荐在项目根目录的 `package.json` 中添加 `allowScripts` 字段, 显式放行本包及其依赖的脚本:
 
@@ -33,7 +36,10 @@
 
 ## 支持的系统与配置要求
 
-本包是 [`@flun/node-mobile-app`](https://www.npmjs.com/package/@flun/node-mobile-app) 与 [`@flun/nodejs-mobile-gyp`](https://www.npmjs.com/package/@flun/nodejs-mobile-gyp) 之间的中间层;完整的宿主平台与工具链要求见 gyp 的「[支持的系统与配置要求](https://github.com/OpenFlun/nodejs-mobile-gyp#支持的系统与配置要求)」.本包相关的要点:
+本包是 [`@flun/node-mobile-app`](https://www.npmjs.com/package/@flun/node-mobile-app) 
+与 [`@flun/nodejs-mobile-gyp`](https://www.npmjs.com/package/@flun/nodejs-mobile-gyp) 之间的中间层;
+完整的宿主平台与工具链要求见 gyp 
+的"[支持的系统与配置要求](https://github.com/OpenFlun/nodejs-mobile-gyp#支持的系统与配置要求)".本包相关的要点:
 
 | 目标平台 | 宿主平台                | 额外要求                                                              |
 | -------- | ----------------------- | --------------------------------------------------------------------- |
@@ -85,7 +91,9 @@ NODE_MOBILE_PREBUILT_IOS_SKIP=1
 
 ### Node.js 运行时能力对照
 
-Android 与 iOS 采用**各自独立**的 Node.js 运行时;下载哪个 Release tag 由 `package.json` 的 `prebuiltAssets.version` 决定(可用环境变量 `NODE_MOBILE_PREBUILT_VERSION` 覆盖), 但同一 tag 下 **Android 与 iOS 附件的实际运行时版本可能不同**--以最终下载到的产物为准:
+Android 与 iOS 采用**各自独立**的 Node.js 运行时;下载哪个 Release tag 由 `package.json` 的 `prebuiltAssets.version` 
+决定(可用环境变量 `NODE_MOBILE_PREBUILT_VERSION` 覆盖), 但同一 tag 
+下 **Android 与 iOS 附件的实际运行时版本可能不同**--以最终下载到的产物为准:
 
 | 平台    | ICU              | Express          | 备注                        |
 | ------- | ---------------- | ---------------- | --------------------------- |
@@ -107,7 +115,8 @@ Android 与 iOS 采用**各自独立**的 Node.js 运行时;下载哪个 Release
 │
 ├── index.js                      # JS桥接层入口
 ├── index.d.ts                    # TypeScript 类型声明
-├── native.js                     # 实际桥接层:start / startWithArgs / startWithScript / channel, 通过NativeModules与原生通信
+├── native.js                     # 实际桥接层:start / startWithArgs / startWithScript / channel,
+│                                 通过NativeModules与原生通信
 ├── react-native.config.js        # RN CLI 配置: 指定 Android sourceDir 与 iOS 的 4 个 Script Phase
 ├── nodejs-mobile-react-native.podspec  # iOS Pod 配置(vendored NodeMobile.xcframework)
 ├── package.json                  # type: module, postinstall 触发 create-node-structure.js 与 download-prebuilt-assets.js
@@ -150,7 +159,8 @@ Android 与 iOS 采用**各自独立**的 Node.js 运行时;下载哪个 Release
 │           └── package.json         # main: index.cjs
 │
 ├── scripts/                      # 构建与安装期脚本(全部 ESM)
-│   ├── create-node-structure.js     # postinstall: 复制 nodejs-assets 到宿主项目根; 宿主项目依赖 @flun/node-mobile-app 时跳过
+│   ├── create-node-structure.js     # postinstall: 复制 nodejs-assets 到宿主项目根;
+│   │                               宿主项目依赖 @flun/node-mobile-app 时跳过
 │   ├── download-prebuilt-assets.js  # postinstall: 从 Gitee / GitHub Release 下载 libnode.so / NodeMobile.xcframework
 │   ├── patch-package.js             # 补丁原生模块的 package.json(node-gyp-build → node-gyp-build-mobile, 绝对路径调用)
 │   ├── ios-copy-nodejs-project.sh   # iOS Script Phase: 复制 Node 项目
@@ -170,7 +180,8 @@ Android 与 iOS 采用**各自独立**的 Node.js 运行时;下载哪个 Release
 
 ### rn-bridge 的处理
 
-`rn-bridge` 是 native binding 的 JS 包装, 必须走 CJS; 因本包是 `type: module`, 入口文件改名为 `index.cjs`,`package.json` 的 `main` 指向它.无论引用方是 CJS 还是 ESM, 都能正常加载;
+`rn-bridge` 是 native binding 的 JS 包装, 必须走 CJS; 因本包是 `type: module`, 入口文件改名为 `index.cjs`,`package.json` 
+的 `main` 指向它.无论引用方是 CJS 还是 ESM, 都能正常加载;
 
 ### 预编译资源下载(libnode.so / NodeMobile.xcframework)
 
@@ -202,15 +213,19 @@ FORTIFY: pthread_mutex_lock called on a destroyed mutex
 Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE)
 ```
 
-**根因**: 早期 v22 `libnode.so` 内置的 CJS loader 补丁按 `rn-bridge/index.js` 硬编码定位入口; 本包因 `type: module` 已把入口改名为 `index.cjs`, 补丁匹配失败, Node 回退到 `process._linkedBinding('rn_bridge')` 拿裸 native binding(只有 `sendMessage` / `registerChannel` / `getDataDir`, 没有 `channel` 属性), 触发崩溃;
+**根因**: 早期 v22 `libnode.so` 内置的 CJS loader 补丁按 `rn-bridge/index.js` 硬编码定位入口; 本包因 `type: module` 
+已把入口改名为 `index.cjs`, 补丁匹配失败, Node 回退到 `process._linkedBinding('rn_bridge')` 拿裸 native binding(只有 
+`sendMessage` / `registerChannel` / `getDataDir`, 没有 `channel` 属性), 触发崩溃;
 
-**方案**:v22 适配包的 CJS loader 补丁改为按**目录** `rn-bridge` 定位, 入口文件名交给该目录 `package.json` 的 `main` 字段解析--无论入口叫 `index.js` / `index.cjs` / `index.mjs` 还是其它, 都能正确加载;
+**方案**:v22 适配包的 CJS loader 补丁改为按**目录** `rn-bridge` 定位, 入口文件名交给该目录 `package.json` 的 `main` 
+字段解析--无论入口叫 `index.js` / `index.cjs` / `index.mjs` 还是其它, 都能正确加载;
 
 **结论**:rn-bridge 作为 native binding 的 JS 包装, 必须走 CJS;
 
 #### 2. 为什么用 `.cjs` 而不是 `.js`
 
-本包整体是 `type: module`, 普通的 `.js` 会被按 ESM 解析;`.cjs` 后缀是 Node 官方约定的 CommonJS 强制后缀,**优先级高于包 `type`**--无论引用方是 CJS 还是 ESM 项目, Node 都用 CJS loader 加载 `index.cjs`;
+本包整体是 `type: module`, 普通的 `.js` 会被按 ESM 解析;`.cjs` 后缀是 Node 官方约定的 CommonJS 
+强制后缀,**优先级高于包 `type`**--无论引用方是 CJS 还是 ESM 项目, Node 都用 CJS loader 加载 `index.cjs`;
 
 因此:
 
@@ -221,8 +236,11 @@ Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE)
 
 #### 3. `sample-main.js` 与生成的 `main.js` 为什么模块类型不同
 
-- `sample-main.js`(示例, 给用户参考): 用 ESM `import`; 用户整包复制后,`sample-package.json` 自带 `type: module`,`import` 天然成立;
-- `main.js`(CLI 生成): 由 `@flun/node-mobile-app` 的 `generate.js` 生成, 用 `createRequire(import.meta.url)` 拿到 `require`, 再加载 `rn-bridge`;`package.json` 默认 `type: module`,`main.js` 本身是 ESM, 但通过 `createRequire` 保证 `rn-bridge` 一定走 CJS loader 路径(原因见坑 1);
+- `sample-main.js`(示例, 给用户参考): 用 ESM `import`; 用户整包复制后,`sample-package.json` 自带 `type: module`,`import` 
+  天然成立;
+- `main.js`(CLI 生成): 由 `@flun/node-mobile-app` 的 `generate.js` 生成, 用 `createRequire(import.meta.url)` 拿到 
+  `require`, 再加载 `rn-bridge`;`package.json` 默认 `type: module`,`main.js` 本身是 ESM, 但通过 `createRequire` 保证 
+  `rn-bridge` 一定走 CJS loader 路径(原因见坑 1);
 
 两者并存, 各服务各的场景;
 
@@ -230,13 +248,15 @@ Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE)
 
 原版把 `react-native` 声明为强制 peer, npm 7+ 会自动安装 peer, 造成重复安装;
 
-本包将其标记为 `peerDependenciesMeta.optional`, 避免用户项目里重复装 RN--`react-native` 由 `@flun/node-mobile-app` 的 `dependencies` 提供, 不会缺失;
+本包将其标记为 `peerDependenciesMeta.optional`, 避免用户项目里重复装 RN--`react-native` 由 `@flun/node-mobile-app` 的 
+`dependencies` 提供, 不会缺失;
 
 ## 使用
 
 ### Node.js 项目
 
-`@flun/nodejs-mobile-react-native` 安装后, 会在你的应用里生成 `nodejs-assets/nodejs-project/` 目录; 这个目录会被打进 APK/IPA, Node 引擎启动时会从这里加载 `main.js`;
+`@flun/nodejs-mobile-react-native` 安装后, 会在你的应用里生成 `nodejs-assets/nodejs-project/` 目录; 这个目录会被打进 
+APK/IPA, Node 引擎启动时会从这里加载 `main.js`;
 
 目录里包含两个示例文件:
 
@@ -245,7 +265,8 @@ Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE)
 
 建议把它们重命名为 `main.js` 和 `package.json` 后开始开发;
 
-> **注意**:`sample-main.js` 和 `sample-package.json` 会在安装/更新 `@flun/nodejs-mobile-react-native` 时被覆盖, 不要直接改动它们;
+> **注意**:`sample-main.js` 和 `sample-package.json` 会在安装/更新 `@flun/nodejs-mobile-react-native` 时被覆盖, 
+  不要直接改动它们;
 
 `main.js` 示例内容(ESM + `createRequire`):
 
@@ -264,7 +285,8 @@ rn_bridge.channel.on('message', (msg) => {
 rn_bridge.channel.send('Node was initialized.');
 ```
 
-> **注意**:`package.json` 默认是 `type: module`,`main.js` 本身是 ESM, 不能直接写 `require('rn-bridge')`; 如需加载 `rn-bridge`, 请用 `createRequire`:
+> **注意**:`package.json` 默认是 `type: module`,`main.js` 本身是 ESM, 不能直接写 `require('rn-bridge')`; 如需加载 
+  `rn-bridge`, 请用 `createRequire`:
 >
 > ```js
 > import { createRequire } from 'module';
@@ -272,13 +294,16 @@ rn_bridge.channel.send('Node was initialized.');
 > const rn_bridge = require('rn-bridge');
 > ```
 
-React Native 的打包器(Metro)会扫描项目目录下的 JS 文件; 为避免它把 `nodejs-assets/nodejs-project/` 里的服务端 JS 也当作应用代码解析, 请在 `metro.config.js` 里用 `blockList` 排除该目录, 配置示例见下方"故障排查"章节;
+React Native 的打包器(Metro)会扫描项目目录下的 JS 文件; 为避免它把 `nodejs-assets/nodejs-project/` 里的服务端 JS 
+也当作应用代码解析, 请在 `metro.config.js` 里用 `blockList` 排除该目录, 配置示例见下方"故障排查"章节;
 
-Node.js 运行时通过 Unix 风格的路径访问文件; Android 上, Node 项目会在应用首次启动(或更新后)从 APK 的 assets 复制到默认应用数据目录下的 `nodejs-project/`;
+Node.js 运行时通过 Unix 风格的路径访问文件; Android 上, Node 项目会在应用首次启动(或更新后)从 APK 的 assets 
+复制到默认应用数据目录下的 `nodejs-project/`;
 
 > **注意**: 应用每次更新后项目目录会被覆盖, 不要把它当作持久化存储; 持久化请用 `rn_bridge.app.datadir()`;
 
-为了加速资源解压(避免递归遍历 assets 目录), 编译时会把文件清单 `file.list` 和目录清单 `dir.list` 一起打进 assets; 这在 Android 6.x 及更旧版本上能规避 assets manager 的一个严重性能 bug;
+为了加速资源解压(避免递归遍历 assets 目录), 编译时会把文件清单 `file.list` 和目录清单 `dir.list` 一起打进 assets; 这在 
+Android 6.x 及更旧版本上能规避 assets manager 的一个严重性能 bug;
 
 #### Node 模块
 
@@ -294,13 +319,16 @@ Windows / Linux / macOS 上均支持编译 **Android** 原生模块;编译 **iOS
 
 - **Android**:需要 Android NDK; 插件会自动定位 NDK 并把工具链路径注入构建环境, 无需手动设置 `ANDROID_NDK_HOME`;
 - **iOS**:需要**完整 Xcode**(仅 macOS;Command Line Tools 单独不够);
-- **Windows 额外需要**:Visual Studio(含「使用 C++ 的桌面开发」工作负载)与 Git for Windows(提供 make 所需的 POSIX 工具); 完整清单见 [@flun/nodejs-mobile-gyp 的系统要求](https://github.com/OpenFlun/nodejs-mobile-gyp#支持的系统与配置要求);
+- **Windows 额外需要**:Visual Studio(含"使用 C++ 的桌面开发"工作负载)与 Git for Windows(提供 make 所需的 POSIX 工具); 
+  完整清单见 [@flun/nodejs-mobile-gyp 的系统要求](https://github.com/OpenFlun/nodejs-mobile-gyp#支持的系统与配置要求);
 
 **运行时版本与开发机的 Node 版本相互独立**:
 
-`prebuiltAssets.version` 指定的是**下载用的 Release tag**, 与开发机安装的 Node 版本无关;**同一 tag 下 Android 与 iOS 附件的实际运行时版本可能不同**(以产物为准);只要开发机的 Node 满足 `package.json` 的 `engines.node` 要求即可编译原生模块--产物的 ABI 由 NDK 与运行时自带的头文件决定, 开发机的 Node 仅用于驱动构建工具链;
+`prebuiltAssets.version` 指定的是**下载用的 Release tag**, 与开发机安装的 Node 
+版本无关;**同一 tag 下 Android 与 iOS 附件的实际运行时版本可能不同**(以产物为准);只要开发机的 Node 满足 `package.json` 的 
+`engines.node` 要求即可编译原生模块--产物的 ABI 由 NDK 与运行时自带的头文件决定, 开发机的 Node 仅用于驱动构建工具链;
 
-切换运行时版本请设置环境变量 `NODE_MOBILE_PREBUILT_VERSION`(详见「安装」章节);
+切换运行时版本请设置环境变量 `NODE_MOBILE_PREBUILT_VERSION`(详见"安装"章节);
 
 Android 上编译原生模块耗时较长(需为每个目标架构分别编译);编译产物 `.node` 会按架构分开打进应用, 运行时选择正确的那个;
 
@@ -336,7 +364,8 @@ nodejs-assets/nodejs-project/node_modules/<MODULE_NAME>/prebuilds/<PLATFORM>-<AR
 
 检测到 prebuild 后, 插件会删除该模块的 `binding.gyp` 并修改 `package.json`, 让 node-gyp 忽略它;
 
-如果你是原生模块作者, 想为自己的模块提供 nodejs-mobile 的 prebuild, 参考 CLI 工具 [prebuild-for-nodejs-mobile](https://github.com/staltz/prebuild-for-nodejs-mobile);
+如果你是原生模块作者, 想为自己的模块提供 nodejs-mobile 的 prebuild, 参考 CLI 
+工具 [prebuild-for-nodejs-mobile](https://github.com/staltz/prebuild-for-nodejs-mobile);
 
 ### React Native 应用
 
@@ -357,7 +386,8 @@ nodejs.channel.addListener(
 
 这会告诉原生代码启动一个专用线程, 从 `nodejs-assets/nodejs-project/main.js` 开始运行 Node, 并在收到 Node 消息时弹窗显示;
 
-> **注意**:Node 项目以单例形式运行在独立线程上, 只有第一次 `nodejs.start()` 生效, 后续调用不会启动新线程; 这意味着 react-native 的热重载不会影响 Node 项目, 需要重启应用;
+> **注意**:Node 项目以单例形式运行在独立线程上, 只有第一次 `nodejs.start()` 生效, 后续调用不会启动新线程; 这意味着 
+  react-native 的热重载不会影响 Node 项目, 需要重启应用;
 
 发送消息给 Node:
 
@@ -387,7 +417,7 @@ import * as nodejs from '@flun/nodejs-mobile-react-native';
 
 > `nodejs.channel.send(...msg)` 等价于 `nodejs.channel.post('message', ...msg)`, 保留是为了向后兼容;
 
-> `nodejs.channel` 继承自 [React Native 的 `EventEmitter` 类](https://github.com/facebook/react-native/blob/055c941c4045468af4ff2b8162d3a35dd993b1b9/Libraries/vendor/emitter/EventEmitter.js), 去掉 `emit`, 增加 `post` 和 `send`;
+> `nodejs.channel` 继承自 [React Native 的 `EventEmitter` 类][rn-ee], 去掉 `emit`, 增加 `post` 和 `send`;
 
 ### nodejs.start(scriptFileName [, options])
 
@@ -482,7 +512,7 @@ const rn_bridge = require('rn-bridge');
 
 > `rn_bridge.channel.send(...msg)` 等价于 `rn_bridge.channel.post('message', ...msg)`, 保留是为了向后兼容;
 
-> `rn_bridge.channel` 继承自 [Node 的 `EventEmitter` 类](https://github.com/nodejs-mobile/nodejs-mobile/blob/9e90dd8c14fce5b047aa16d00e22a8ef44222a99/lib/events.js), 去掉 `emit`, 增加 `post` 和 `send`;
+> `rn_bridge.channel` 继承自 [Node 的 `EventEmitter` 类][node-ee], 去掉 `emit`, 增加 `post` 和 `send`;
 
 ### rn_bridge.channel.on(event, callback)
 
@@ -543,7 +573,9 @@ rn_bridge.app.on('resume', () => {
 })
 ```
 
-`'pause'` 事件在应用切到后台时触发; iOS 上系统会等待所有 `'pause'` 处理器返回后才真正挂起应用; 为了让 iOS 知道何时可以安全挂起, 每个 `'pause'` 监听器会收到一个 `pauseLock` 参数, 调用它的 `release()` 表示该监听器已经完成工作; 所有锁都释放后(或 iOS 强制挂起), 应用才会进入挂起状态;
+`'pause'` 事件在应用切到后台时触发; iOS 上系统会等待所有 `'pause'` 处理器返回后才真正挂起应用; 为了让 iOS 
+知道何时可以安全挂起, 每个 `'pause'` 监听器会收到一个 `pauseLock` 参数, 调用它的 `release()` 表示该监听器已经完成工作; 
+所有锁都释放后(或 iOS 强制挂起), 应用才会进入挂起状态;
 
 ```js
 rn_bridge.app.on('pause', (pauseLock) => {
@@ -554,7 +586,8 @@ rn_bridge.app.on('pause', (pauseLock) => {
 })
 ```
 
-> **警告**:iOS 上应用最终一定会被挂起;`pause` 事件里应尽快完成清理, 并确保每个监听器都调用 `pauseLock.release()`, 否则应用会在 iOS 允许的范围内一直占用后台;
+> **警告**:iOS 上应用最终一定会被挂起;`pause` 事件里应尽快完成清理, 并确保每个监听器都调用 `pauseLock.release()`, 
+  否则应用会在 iOS 允许的范围内一直占用后台;
 
 ### rn_bridge.app.datadir()
 
@@ -570,7 +603,8 @@ rn_bridge.app.on('pause', (pauseLock) => {
 
 - JS 的 `Date` 会被转成字符串
 - 函数会从对象里被剔除
-- 只支持 `Boolean`,`Number`,`String`,`Object`,`Array`,`null` 这些类型(符合 [JSON 数据交换语法标准](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf))
+- 只支持 `Boolean`,`Number`,`String`,`Object`,`Array`,`null` 
+  这些类型(符合 [JSON 数据交换语法标准](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf))
 - `NaN`,`Infinity`,`-Infinity` 会被 `JSON.stringify` 转成 `null`
 - `undefined` 在对象里会被剔除, 在数组里会被转成 `null`
 - 循环引用会抛出 `TypeError`
@@ -606,7 +640,8 @@ react-native run-android
 
 ### 让 Metro 忽略 nodejs-project
 
-React Native 的打包器(Metro)会扫描项目目录下的 JS 文件;`nodejs-assets/nodejs-project/` 里是 Node 引擎在设备上加载的服务端代码, 不应被 Metro 当作应用代码解析, 否则可能被误打包或与其他模块发生路径冲突;
+React Native 的打包器(Metro)会扫描项目目录下的 JS 文件;`nodejs-assets/nodejs-project/` 里是 Node 
+引擎在设备上加载的服务端代码, 不应被 Metro 当作应用代码解析, 否则可能被误打包或与其他模块发生路径冲突;
 
 解决办法: 在项目的 `metro.config.js` 里用 `blockList` 把 `nodejs-assets/`,`android/`,`ios/` 排除掉(react-native >= 0.87.1):
 
@@ -654,8 +689,12 @@ export default {
 - **minor**: 新增功能, 向后兼容
 - **patch**: 修复 Bug, 向后兼容
 
-与上游原版"跟随 Node 版本号"的策略不同, 本 fork 的版本号独立于 Node 版本;移动端实际使用的 Node 运行时版本由 `prebuiltAssets` 与下载到的产物决定, 见"安装"章节;
+与上游原版"跟随 Node 版本号"的策略不同, 本 fork 的版本号独立于 Node 版本;移动端实际使用的 Node 运行时版本由 
+`prebuiltAssets` 与下载到的产物决定, 见"安装"章节;
 
 ## 许可
 
 ISC
+
+[rn-ee]: https://github.com/facebook/react-native/blob/055c941c4045/Libraries/vendor/emitter/EventEmitter.js
+[node-ee]: https://github.com/nodejs-mobile/nodejs-mobile/blob/9e90dd8c14fce5b047aa16d00e22a8ef44222a99/lib/events.js

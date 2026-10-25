@@ -247,6 +247,3 @@ id appPauseEventsManagerSetLock = [[NSObject alloc] init];
   node_start(argument_count, argv);
 }
 @end
-
-
-

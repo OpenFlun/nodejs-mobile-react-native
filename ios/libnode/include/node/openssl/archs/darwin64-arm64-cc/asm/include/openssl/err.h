@@ -372,20 +372,28 @@ typedef struct ERR_string_data_st {
 } ERR_STRING_DATA;
 
 DEFINE_LHASH_OF_INTERNAL(ERR_STRING_DATA);
-#define lh_ERR_STRING_DATA_new(hfn, cmp) ((LHASH_OF(ERR_STRING_DATA) *)OPENSSL_LH_new(ossl_check_ERR_STRING_DATA_lh_hashfunc_type(hfn), ossl_check_ERR_STRING_DATA_lh_compfunc_type(cmp)))
+#define lh_ERR_STRING_DATA_new(hfn, cmp) ((LHASH_OF(ERR_STRING_DATA) \
+        *)OPENSSL_LH_new(ossl_check_ERR_STRING_DATA_lh_hashfunc_type(hfn), \
+        ossl_check_ERR_STRING_DATA_lh_compfunc_type(cmp)))
 #define lh_ERR_STRING_DATA_free(lh) OPENSSL_LH_free(ossl_check_ERR_STRING_DATA_lh_type(lh))
 #define lh_ERR_STRING_DATA_flush(lh) OPENSSL_LH_flush(ossl_check_ERR_STRING_DATA_lh_type(lh))
-#define lh_ERR_STRING_DATA_insert(lh, ptr) ((ERR_STRING_DATA *)OPENSSL_LH_insert(ossl_check_ERR_STRING_DATA_lh_type(lh), ossl_check_ERR_STRING_DATA_lh_plain_type(ptr)))
-#define lh_ERR_STRING_DATA_delete(lh, ptr) ((ERR_STRING_DATA *)OPENSSL_LH_delete(ossl_check_ERR_STRING_DATA_lh_type(lh), ossl_check_const_ERR_STRING_DATA_lh_plain_type(ptr)))
-#define lh_ERR_STRING_DATA_retrieve(lh, ptr) ((ERR_STRING_DATA *)OPENSSL_LH_retrieve(ossl_check_ERR_STRING_DATA_lh_type(lh), ossl_check_const_ERR_STRING_DATA_lh_plain_type(ptr)))
+#define lh_ERR_STRING_DATA_insert(lh, ptr) ((ERR_STRING_DATA *)OPENSSL_LH_insert(ossl_check_ERR_STRING_DATA_lh_type(lh), \
+        ossl_check_ERR_STRING_DATA_lh_plain_type(ptr)))
+#define lh_ERR_STRING_DATA_delete(lh, ptr) ((ERR_STRING_DATA *)OPENSSL_LH_delete(ossl_check_ERR_STRING_DATA_lh_type(lh), \
+        ossl_check_const_ERR_STRING_DATA_lh_plain_type(ptr)))
+#define lh_ERR_STRING_DATA_retrieve(lh, ptr) ((ERR_STRING_DATA \
+        *)OPENSSL_LH_retrieve(ossl_check_ERR_STRING_DATA_lh_type(lh), ossl_check_const_ERR_STRING_DATA_lh_plain_type(ptr)))
 #define lh_ERR_STRING_DATA_error(lh) OPENSSL_LH_error(ossl_check_ERR_STRING_DATA_lh_type(lh))
 #define lh_ERR_STRING_DATA_num_items(lh) OPENSSL_LH_num_items(ossl_check_ERR_STRING_DATA_lh_type(lh))
-#define lh_ERR_STRING_DATA_node_stats_bio(lh, out) OPENSSL_LH_node_stats_bio(ossl_check_const_ERR_STRING_DATA_lh_type(lh), out)
-#define lh_ERR_STRING_DATA_node_usage_stats_bio(lh, out) OPENSSL_LH_node_usage_stats_bio(ossl_check_const_ERR_STRING_DATA_lh_type(lh), out)
+#define lh_ERR_STRING_DATA_node_stats_bio(lh, out) \
+        OPENSSL_LH_node_stats_bio(ossl_check_const_ERR_STRING_DATA_lh_type(lh), out)
+#define lh_ERR_STRING_DATA_node_usage_stats_bio(lh, out) \
+        OPENSSL_LH_node_usage_stats_bio(ossl_check_const_ERR_STRING_DATA_lh_type(lh), out)
 #define lh_ERR_STRING_DATA_stats_bio(lh, out) OPENSSL_LH_stats_bio(ossl_check_const_ERR_STRING_DATA_lh_type(lh), out)
 #define lh_ERR_STRING_DATA_get_down_load(lh) OPENSSL_LH_get_down_load(ossl_check_ERR_STRING_DATA_lh_type(lh))
 #define lh_ERR_STRING_DATA_set_down_load(lh, dl) OPENSSL_LH_set_down_load(ossl_check_ERR_STRING_DATA_lh_type(lh), dl)
-#define lh_ERR_STRING_DATA_doall(lh, dfn) OPENSSL_LH_doall(ossl_check_ERR_STRING_DATA_lh_type(lh), ossl_check_ERR_STRING_DATA_lh_doallfunc_type(dfn))
+#define lh_ERR_STRING_DATA_doall(lh, dfn) OPENSSL_LH_doall(ossl_check_ERR_STRING_DATA_lh_type(lh), \
+        ossl_check_ERR_STRING_DATA_lh_doallfunc_type(dfn))
 
 
 /* 12 lines and some on an 80 column terminal */

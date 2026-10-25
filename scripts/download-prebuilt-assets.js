@@ -64,7 +64,8 @@ if (!cfg) log('package.json 未配置 prebuiltAssets 字段,跳过'), process.ex
 const targetVersion = process.env.NODE_MOBILE_PREBUILT_VERSION || cfg.version,
   sources = cfg.sources || [], assets = cfg.assets || [];
 
-if (!targetVersion || sources.length === 0 || assets.length === 0) log('prebuiltAssets 字段配置不完整,跳过'), process.exit(0);
+if (!targetVersion || sources.length === 0 || assets.length === 0)
+    log('prebuiltAssets 字段配置不完整,跳过'), process.exit(0);
 
 const processAsset = async asset => {
   const { file, entry, target, platforms, envKey, hintOn, hint } = asset;

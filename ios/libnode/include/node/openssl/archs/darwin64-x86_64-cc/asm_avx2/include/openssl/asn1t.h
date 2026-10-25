@@ -206,7 +206,8 @@ extern "C" {
         ASN1_SEQUENCE(tname)
 
 # define ASN1_SEQUENCE_ref(tname, cb) \
-        static const ASN1_AUX tname##_aux = {NULL, ASN1_AFLG_REFCOUNT, offsetof(tname, references), offsetof(tname, lock), cb, 0, NULL}; \
+        static const ASN1_AUX \
+        tname##_aux = {NULL, ASN1_AFLG_REFCOUNT, offsetof(tname, references), offsetof(tname, lock), cb, 0, NULL}; \
         ASN1_SEQUENCE(tname)
 
 # define ASN1_SEQUENCE_enc(tname, enc, cb) \
@@ -393,14 +394,16 @@ extern "C" {
 
 /* IMPLICIT tagged OPTIONAL simple type */
 # define ASN1_IMP_OPT(stname, field, type, tag) ASN1_IMP_EX(stname, field, type, tag, ASN1_TFLG_OPTIONAL)
-# define ASN1_IMP_OPT_EMBED(stname, field, type, tag) ASN1_IMP_EX(stname, field, type, tag, ASN1_TFLG_OPTIONAL|ASN1_TFLG_EMBED)
+# define ASN1_IMP_OPT_EMBED(stname, field, type, tag) ASN1_IMP_EX(stname, field, type, tag, \
+        ASN1_TFLG_OPTIONAL|ASN1_TFLG_EMBED)
 
 /* Same as above but EXPLICIT */
 
 # define ASN1_EXP(stname, field, type, tag) ASN1_EXP_EX(stname, field, type, tag, 0)
 # define ASN1_EXP_EMBED(stname, field, type, tag) ASN1_EXP_EX(stname, field, type, tag, ASN1_TFLG_EMBED)
 # define ASN1_EXP_OPT(stname, field, type, tag) ASN1_EXP_EX(stname, field, type, tag, ASN1_TFLG_OPTIONAL)
-# define ASN1_EXP_OPT_EMBED(stname, field, type, tag) ASN1_EXP_EX(stname, field, type, tag, ASN1_TFLG_OPTIONAL|ASN1_TFLG_EMBED)
+# define ASN1_EXP_OPT_EMBED(stname, field, type, tag) ASN1_EXP_EX(stname, field, type, tag, \
+        ASN1_TFLG_OPTIONAL|ASN1_TFLG_EMBED)
 
 /* SEQUENCE OF type */
 # define ASN1_SEQUENCE_OF(stname, field, type) \
@@ -899,27 +902,39 @@ SKM_DEFINE_STACK_OF_INTERNAL(ASN1_VALUE, ASN1_VALUE, ASN1_VALUE)
 #define sk_ASN1_VALUE_value(sk, idx) ((ASN1_VALUE *)OPENSSL_sk_value(ossl_check_const_ASN1_VALUE_sk_type(sk), (idx)))
 #define sk_ASN1_VALUE_new(cmp) ((STACK_OF(ASN1_VALUE) *)OPENSSL_sk_new(ossl_check_ASN1_VALUE_compfunc_type(cmp)))
 #define sk_ASN1_VALUE_new_null() ((STACK_OF(ASN1_VALUE) *)OPENSSL_sk_new_null())
-#define sk_ASN1_VALUE_new_reserve(cmp, n) ((STACK_OF(ASN1_VALUE) *)OPENSSL_sk_new_reserve(ossl_check_ASN1_VALUE_compfunc_type(cmp), (n)))
+#define sk_ASN1_VALUE_new_reserve(cmp, n) ((STACK_OF(ASN1_VALUE) \
+        *)OPENSSL_sk_new_reserve(ossl_check_ASN1_VALUE_compfunc_type(cmp), (n)))
 #define sk_ASN1_VALUE_reserve(sk, n) OPENSSL_sk_reserve(ossl_check_ASN1_VALUE_sk_type(sk), (n))
 #define sk_ASN1_VALUE_free(sk) OPENSSL_sk_free(ossl_check_ASN1_VALUE_sk_type(sk))
 #define sk_ASN1_VALUE_zero(sk) OPENSSL_sk_zero(ossl_check_ASN1_VALUE_sk_type(sk))
 #define sk_ASN1_VALUE_delete(sk, i) ((ASN1_VALUE *)OPENSSL_sk_delete(ossl_check_ASN1_VALUE_sk_type(sk), (i)))
-#define sk_ASN1_VALUE_delete_ptr(sk, ptr) ((ASN1_VALUE *)OPENSSL_sk_delete_ptr(ossl_check_ASN1_VALUE_sk_type(sk), ossl_check_ASN1_VALUE_type(ptr)))
+#define sk_ASN1_VALUE_delete_ptr(sk, ptr) ((ASN1_VALUE *)OPENSSL_sk_delete_ptr(ossl_check_ASN1_VALUE_sk_type(sk), \
+        ossl_check_ASN1_VALUE_type(ptr)))
 #define sk_ASN1_VALUE_push(sk, ptr) OPENSSL_sk_push(ossl_check_ASN1_VALUE_sk_type(sk), ossl_check_ASN1_VALUE_type(ptr))
-#define sk_ASN1_VALUE_unshift(sk, ptr) OPENSSL_sk_unshift(ossl_check_ASN1_VALUE_sk_type(sk), ossl_check_ASN1_VALUE_type(ptr))
+#define sk_ASN1_VALUE_unshift(sk, ptr) OPENSSL_sk_unshift(ossl_check_ASN1_VALUE_sk_type(sk), \
+        ossl_check_ASN1_VALUE_type(ptr))
 #define sk_ASN1_VALUE_pop(sk) ((ASN1_VALUE *)OPENSSL_sk_pop(ossl_check_ASN1_VALUE_sk_type(sk)))
 #define sk_ASN1_VALUE_shift(sk) ((ASN1_VALUE *)OPENSSL_sk_shift(ossl_check_ASN1_VALUE_sk_type(sk)))
-#define sk_ASN1_VALUE_pop_free(sk, freefunc) OPENSSL_sk_pop_free(ossl_check_ASN1_VALUE_sk_type(sk),ossl_check_ASN1_VALUE_freefunc_type(freefunc))
-#define sk_ASN1_VALUE_insert(sk, ptr, idx) OPENSSL_sk_insert(ossl_check_ASN1_VALUE_sk_type(sk), ossl_check_ASN1_VALUE_type(ptr), (idx))
-#define sk_ASN1_VALUE_set(sk, idx, ptr) ((ASN1_VALUE *)OPENSSL_sk_set(ossl_check_ASN1_VALUE_sk_type(sk), (idx), ossl_check_ASN1_VALUE_type(ptr)))
+#define sk_ASN1_VALUE_pop_free(sk, freefunc) \
+        OPENSSL_sk_pop_free(ossl_check_ASN1_VALUE_sk_type(sk),ossl_check_ASN1_VALUE_freefunc_type(freefunc))
+#define sk_ASN1_VALUE_insert(sk, ptr, idx) OPENSSL_sk_insert(ossl_check_ASN1_VALUE_sk_type(sk), \
+        ossl_check_ASN1_VALUE_type(ptr), (idx))
+#define sk_ASN1_VALUE_set(sk, idx, ptr) ((ASN1_VALUE *)OPENSSL_sk_set(ossl_check_ASN1_VALUE_sk_type(sk), (idx), \
+        ossl_check_ASN1_VALUE_type(ptr)))
 #define sk_ASN1_VALUE_find(sk, ptr) OPENSSL_sk_find(ossl_check_ASN1_VALUE_sk_type(sk), ossl_check_ASN1_VALUE_type(ptr))
-#define sk_ASN1_VALUE_find_ex(sk, ptr) OPENSSL_sk_find_ex(ossl_check_ASN1_VALUE_sk_type(sk), ossl_check_ASN1_VALUE_type(ptr))
-#define sk_ASN1_VALUE_find_all(sk, ptr, pnum) OPENSSL_sk_find_all(ossl_check_ASN1_VALUE_sk_type(sk), ossl_check_ASN1_VALUE_type(ptr), pnum)
+#define sk_ASN1_VALUE_find_ex(sk, ptr) OPENSSL_sk_find_ex(ossl_check_ASN1_VALUE_sk_type(sk), \
+        ossl_check_ASN1_VALUE_type(ptr))
+#define sk_ASN1_VALUE_find_all(sk, ptr, pnum) OPENSSL_sk_find_all(ossl_check_ASN1_VALUE_sk_type(sk), \
+        ossl_check_ASN1_VALUE_type(ptr), pnum)
 #define sk_ASN1_VALUE_sort(sk) OPENSSL_sk_sort(ossl_check_ASN1_VALUE_sk_type(sk))
 #define sk_ASN1_VALUE_is_sorted(sk) OPENSSL_sk_is_sorted(ossl_check_const_ASN1_VALUE_sk_type(sk))
 #define sk_ASN1_VALUE_dup(sk) ((STACK_OF(ASN1_VALUE) *)OPENSSL_sk_dup(ossl_check_const_ASN1_VALUE_sk_type(sk)))
-#define sk_ASN1_VALUE_deep_copy(sk, copyfunc, freefunc) ((STACK_OF(ASN1_VALUE) *)OPENSSL_sk_deep_copy(ossl_check_const_ASN1_VALUE_sk_type(sk), ossl_check_ASN1_VALUE_copyfunc_type(copyfunc), ossl_check_ASN1_VALUE_freefunc_type(freefunc)))
-#define sk_ASN1_VALUE_set_cmp_func(sk, cmp) ((sk_ASN1_VALUE_compfunc)OPENSSL_sk_set_cmp_func(ossl_check_ASN1_VALUE_sk_type(sk), ossl_check_ASN1_VALUE_compfunc_type(cmp)))
+#define sk_ASN1_VALUE_deep_copy(sk, copyfunc, freefunc) ((STACK_OF(ASN1_VALUE) \
+        *)OPENSSL_sk_deep_copy(ossl_check_const_ASN1_VALUE_sk_type(sk), ossl_check_ASN1_VALUE_copyfunc_type(copyfunc), \
+        ossl_check_ASN1_VALUE_freefunc_type(freefunc)))
+#define sk_ASN1_VALUE_set_cmp_func(sk, cmp) \
+        ((sk_ASN1_VALUE_compfunc)OPENSSL_sk_set_cmp_func(ossl_check_ASN1_VALUE_sk_type(sk), \
+        ossl_check_ASN1_VALUE_compfunc_type(cmp)))
 
 
 

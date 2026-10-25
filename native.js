@@ -88,7 +88,8 @@ const registerChannel = channel => channels[channel.name] = channel;
  */
 const start = (mainFileName, options = {}) => {
     if (typeof mainFileName !== 'string')
-        throw new Error('@flun/nodejs-mobile-react-native 的 start 需要传入 main .js 入口文件名,例如:nodejs.start("main.js")');
+        throw new Error(
+            '@flun/nodejs-mobile-react-native 的 start 需要传入 main .js 入口文件名,例如:nodejs.start("main.js")');
 
     RNNodeJsMobile.startNodeProject(mainFileName, options)
 }
