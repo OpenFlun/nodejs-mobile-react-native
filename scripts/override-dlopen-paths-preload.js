@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 运行时 preload:覆盖 process.dlopen,把原生模块从原始路径映射到 App 的 Frameworks 目录.
  *
  * 本文件以 ESM 书写.node -r 加载本文件时,按加载方(宿主项目)的 package.json type 解析:

@@ -61,7 +61,8 @@ preparePrebuiltModule()
   mv $DOT_NODE_FULL $MODULE_ROOT/build/Release/
   # Hack the npm package to forcefully disable compile-on-install:
   rm -rf $MODULE_ROOT/binding.gyp
-  sed -i.bak 's/"install"/"dontinstall"/g; s/"rebuild"/"dontrebuild"/g; s/"gypfile"/"dontgypfile"/g' $MODULE_ROOT/package.json
+  sed_expr='s/"install"/"dontinstall"/g; s/"rebuild"/"dontrebuild"/g; s/"gypfile"/"dontgypfile"/g'
+  sed -i.bak "$sed_expr" $MODULE_ROOT/package.json
 }
 
 # Delete bundle contents that may be there from previous builds.
@@ -100,7 +101,10 @@ if [ -d "$NODEPROJ"/node_modules/ ]; then
 fi
 
 # Get the nodejs-mobile-gyp location
-NODEJS_MOBILE_GYP_BIN_FILE="$( cd "$PROJECT_DIR" && cd .. && node -p 'require.resolve(`@flun/nodejs-mobile-gyp/bin/node-gyp.js`)' )"
+NODEJS_MOBILE_GYP_BIN_FILE="$(
+  cd "$PROJECT_DIR" && cd .. &&
+  node -p 'require.resolve(`@flun/nodejs-mobile-gyp/bin/node-gyp.js`)'
+)"
 
 # Support building neon-bindings (Rust) native modules
 if [ -f ~/.cargo/env ]; then

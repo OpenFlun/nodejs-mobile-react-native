@@ -66,10 +66,11 @@
     }
   },
   "dependencies": {
-    "ncp": "^2.0.0",
-    "node-gyp-build-mobile": "^4.6.0-3",
     "@flun/nodejs-mobile-gyp": "*",
-    "adm-zip": "^0.6.1"
+    "adm-zip": "^0.6.1",
+    "chalk": "^6.0.1",
+    "ncp": "^2.0.0",
+    "node-gyp-build-mobile": "^4.6.0-3"
   },
   "publishConfig": {
     "access": "public",
