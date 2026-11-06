@@ -66,7 +66,7 @@
     }
   },
   "dependencies": {
-    "@flun/nodejs-mobile-gyp": "^1.2.1",
+    "@flun/nodejs-mobile-gyp": "*",
     "adm-zip": "^0.6.1",
     "chalk": "^6.0.1",
     "ncp": "^2.0.0",
