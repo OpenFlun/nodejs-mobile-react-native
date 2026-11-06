@@ -699,7 +699,7 @@ ISC
 ## 贡献
 
 - 源码: [GitHub](https://github.com/OpenFlun/nodejs-mobile-react-native)
-- 镜像: [Gitee](https://gitee.com/OpenFlun/nodejs-mobile-react-native)
+- 中国镜像: [Gitee](https://gitee.com/OpenFlun/nodejs-mobile-react-native)
 - 问题反馈: [Issues](https://github.com/OpenFlun/nodejs-mobile-react-native/issues)
 
 [rn-ee]: https://github.com/facebook/react-native/blob/055c941c4045/Libraries/vendor/emitter/EventEmitter.js
