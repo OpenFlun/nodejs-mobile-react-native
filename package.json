@@ -62,7 +62,7 @@
     "url": "https://github.com/OpenFlun/nodejs-mobile-react-native/issues"
   },
   "peerDependencies": {
-    "react-native": ">=0.88.0"
+    "react-native": ">=0.88.1"
   },
   "peerDependenciesMeta": {
     "react-native": {
