@@ -54,6 +54,10 @@
     "type": "git",
     "url": "https://github.com/OpenFlun/nodejs-mobile-react-native.git"
   },
+  "gitee": {
+    "type": "git",
+    "url": "https://gitee.com/OpenFlun/nodejs-mobile-react-native.git"
+  },
   "bugs": {
     "url": "https://github.com/OpenFlun/nodejs-mobile-react-native/issues"
   },
