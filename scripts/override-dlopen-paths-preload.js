@@ -14,9 +14,9 @@
  * 再由 RNNodeJsMobile.m 以 node -r 方式加载.
  */
 
-import fs from 'fs'
-import path from 'path'
-import { fileURLToPath } from 'url'
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url)),
   substitutionDataFile = path.join(__dirname, 'override-dlopen-paths-data.json');

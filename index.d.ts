@@ -1,4 +1,4 @@
-import { start, startWithArgs, startWithScript, channel } from './native.js';
+import { channel, start, startWithArgs, startWithScript } from './native.js';
 import { ChannelCallback } from './types.d.ts';
 
 /**
@@ -37,27 +37,22 @@ declare class EventChannel {
   send(...message: any[]): void
 }
 
-/**
- * 与 Node 侧双向通信的事件通道
- * > 查看定义:{@link channel}
- */
-export const channel: EventChannel
 // =================================== 模块导出入口 ===================================
 /**
  * @flun/nodejs-mobile-react-native 模块
  *
  * 主要功能:
  * ```js
+ * channel.post('event', data);         // 向 Node 侧发送事件
  * start('main.js');                    // 启动 Node.js Mobile 运行时
  * startWithArgs('main.js --config x'); // 带参数启动
  * startWithScript('console.log(1)');   // 用脚本字符串启动
- * channel.post('event', data);         // 向 Node 侧发送事件
  * ```
  *
- * > 查看定义:{@link start},{@link startWithArgs},{@link startWithScript},{@link channel}
+ * > 查看定义:{@link channel},{@link start},{@link startWithArgs},{@link startWithScript}
  *
  * @example
- * import { start, startWithArgs, startWithScript, channel } from '@flun/nodejs-mobile-react-native';
+ * import { channel, start, startWithArgs, startWithScript } from '@flun/nodejs-mobile-react-native';
  *
  * // 1. 启动默认入口
  * start('main.js');
@@ -75,6 +70,6 @@ export const channel: EventChannel
  * channel.post('hello', { a: 1 });
  */
 declare module './index.js' {
-  export { start, startWithArgs, startWithScript, channel }
+  export { channel, start, startWithArgs, startWithScript }
 }
 export { ChannelCallback, StartupOptions } from './types.d.ts';

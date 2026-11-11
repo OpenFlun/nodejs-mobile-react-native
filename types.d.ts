@@ -5,7 +5,7 @@
  * > 查看定义:{@link ChannelCallback}
  * @param arg 消息内容,类型可以是:`boolean`,`number`,`string`,`object`,`array`
  */
-export type ChannelCallback = (...arg: any[]) => void
+export type ChannelCallback = (...arg: any[]) => void;
 
 /**
  * `start`,`startWithArgs` 和 `startWithScript` 的可选启动选项
@@ -16,5 +16,5 @@ export interface StartupOptions {
      * 是否把 Node 的 stdout/stderr 重定向到 Android logcat
      * @default true
      */
-    redirectOutputToLogcat?: boolean
+    redirectOutputToLogcat?: boolean;
 }

@@ -1,5 +1,5 @@
-import { NativeModules, NativeAppEventEmitter } from 'react-native'
-import EventEmitter from 'react-native/Libraries/vendor/emitter/EventEmitter'
+import { NativeAppEventEmitter, NativeModules } from 'react-native';
+import EventEmitter from 'react-native/Libraries/vendor/emitter/EventEmitter';
 
 const channels = {}, { RNNodeJsMobile } = NativeModules;
 /**
@@ -10,20 +10,20 @@ const channels = {}, { RNNodeJsMobile } = NativeModules;
 class MessageCodec {
     // 私有构造,仅由本类的静态方法使用
     constructor(_event, ..._payload) {
-        this.event = _event, this.payload = JSON.stringify(_payload)
+        this.event = _event, this.payload = JSON.stringify(_payload);
     }
 
     // 序列化事件名与负载
     static serialize(event, ...payload) {
-        const envelope = new MessageCodec(event, ...payload)
+        const envelope = new MessageCodec(event, ...payload);
         return JSON.stringify(envelope); // 返回可经通道发送的序列化消息
     }
 
     // 反序列化事件名与负载
     static deserialize(message) {
-        const envelope = JSON.parse(message)
+        const envelope = JSON.parse(message);
         if (typeof envelope.payload !== 'undefined') envelope.payload = JSON.parse(envelope.payload);
-        return envelope
+        return envelope;
     }
 }
 
@@ -32,12 +32,10 @@ class MessageCodec {
  */
 class ChannelSuper extends EventEmitter {
     constructor(name) {
-        super()
-        this.name = name
+        super(), this.name = name;
         // 把 'emit' 改名为 'emitLocal' 不是必须的,但能明确:
         // 在该对象上"emit"只有本地作用域--事件只在 Node 侧触发,不会发送到 React Native;
-        this.emitLocal = this.emit
-        delete this.emit
+        this.emitLocal = this.emit, delete this.emit;
     }
 }
 
@@ -54,7 +52,7 @@ class EventChannel extends ChannelSuper {
      * @param message 消息内容,支持多个参数
      */
     post(event, ...msg) {
-        RNNodeJsMobile.sendMessage(this.name, MessageCodec.serialize(event, ...msg))
+        RNNodeJsMobile.sendMessage(this.name, MessageCodec.serialize(event, ...msg));
     }
 
     /**
@@ -62,7 +60,7 @@ class EventChannel extends ChannelSuper {
      * @param message 消息内容,支持多个参数
      */
     send(...msg) {
-        this.post('message', ...msg)
+        this.post('message', ...msg);
     }
 
     /**
@@ -72,10 +70,15 @@ class EventChannel extends ChannelSuper {
      * @param data 序列化后的消息信封字符串(由原生代码经通道分发到此)
      */
     processData(data) {
-        const envelope = MessageCodec.deserialize(data)
-        this.emitLocal(envelope.event, ...(envelope.payload))
+        const envelope = MessageCodec.deserialize(data);
+        this.emitLocal(envelope.event, ...(envelope.payload));
     }
 }
+/**
+ * 与 Node 侧双向通信的事件通道
+ * > 查看定义:{@link channel}
+ */
+const channel = new EventChannel('_EVENTS_');
 /**
  * 注册通道到全局字典
  */
@@ -91,7 +94,7 @@ const start = (mainFileName, options = {}) => {
         throw new Error(
             '@flun/nodejs-mobile-react-native 的 start 需要传入 main .js 入口文件名,例如:nodejs.start("main.js")');
 
-    RNNodeJsMobile.startNodeProject(mainFileName, options)
+    RNNodeJsMobile.startNodeProject(mainFileName, options);
 }
 /**
  * 从 nodejs-project 目录下的某个文件启动运行时线程,并传入额外参数
@@ -104,7 +107,7 @@ const startWithArgs = (command, options = {}) => {
         throw new Error(`@flun/nodejs-mobile-react-native 的 startWithArgs 需要传入 main .js 入口文件名与可选参数;
       例如:nodejs.startWithArgs("main.js -c custom")`);
 
-    RNNodeJsMobile.startNodeProjectWithArgs(command, options)
+    RNNodeJsMobile.startNodeProjectWithArgs(command, options);
 }
 /**
  * 用一个脚本字符串启动 nodejs-mobile 运行时线程
@@ -114,13 +117,7 @@ const startWithArgs = (command, options = {}) => {
  */
 const startWithScript = (script, options = {}) => RNNodeJsMobile.startNodeWithScript(script, options);
 
-/**
- * 与 Node 侧双向通信的事件通道
- * > 查看定义:{@link channel}
- */
-const channel = new EventChannel('_EVENTS_')
 registerChannel(channel);
-
 /*
  * 所有通道的分发器.该事件由插件的原生代码调用,
  * 把来自 Node 的事件送达此处.
@@ -128,8 +125,8 @@ registerChannel(channel);
  * message 字段是数据.
  */
 NativeAppEventEmitter.addListener('nodejs-mobile-react-native-message', e => {
-    if (channels[e.channelName]) channels[e.channelName].processData(e.message)
-    else throw new Error(`通道未找到: ${e.channelName}`)
+    if (channels[e.channelName]) channels[e.channelName].processData(e.message);
+    else throw new Error(`通道未找到: ${e.channelName}`);
 });
 
-export { start, startWithArgs, startWithScript, channel };
+export { channel, start, startWithArgs, startWithScript };

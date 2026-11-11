@@ -156,15 +156,24 @@ const channels = {},
   registerChannel = channel => {
     channels[channel.name] = channel;
     NativeBridge.registerChannel(channel.name, bridgeListener);
-  },
-  /**
-   * 模块导出;
-   */
-  systemChannel = new SystemChannel(SYSTEM_CHANNEL), eventChannel = new EventChannel(EVENT_CHANNEL);
+  };
+/**
+ * 系统事件通道
+ * >查看定义:@see {@link app}
+ * @type {SystemChannel}
+ */
+const app = new SystemChannel(SYSTEM_CHANNEL);
 
-registerChannel(systemChannel);
+/**
+ * 业务事件通道
+ * >查看定义:@see {@link channel}
+ * @type {EventChannel}
+ */
+const channel = new EventChannel(EVENT_CHANNEL);
+
+registerChannel(app);
 // 通知原生代码我们已准备好接收应用事件,避免 Node 就绪前原生代码加锁;
 NativeBridge.sendMessage(SYSTEM_CHANNEL, "ready-for-app-events");
-registerChannel(eventChannel);
+registerChannel(channel);
 
-module.exports = exports = { app: systemChannel, channel: eventChannel }
+module.exports = exports = { app, channel };

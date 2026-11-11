@@ -1,9 +1,12 @@
-export default {
+/**
+ * React Native CLI 配置
+ * >查看定义:@see {@link reactNativeConfig}
+ * @type {object}
+ */
+const reactNativeConfig = {
   dependency: {
     platforms: {
-      android: {
-        sourceDir: './android'
-      },
+      android: { sourceDir: './android' },
       ios: {
         scriptPhases: [
           {
@@ -27,4 +30,6 @@ export default {
       }
     }
   }
-}
+};
+
+export default reactNativeConfig;

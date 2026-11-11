@@ -1,2 +1,2 @@
-import { start, startWithArgs, startWithScript, channel } from './native.js';
-export { start, startWithArgs, startWithScript, channel };
+import { channel, start, startWithArgs, startWithScript } from './native.js';
+export { channel, start, startWithArgs, startWithScript };

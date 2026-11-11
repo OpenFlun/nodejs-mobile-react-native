@@ -42,10 +42,10 @@
  *   - 单个 asset 全部源失败 → 打印下载链接,但不中断 npm 安装
  */
 
+import AdmZip from 'adm-zip';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import AdmZip from 'adm-zip';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url)), packageRoot = path.resolve(__dirname, '..'),
   tmpDir = path.join(packageRoot, '.prebuilt-tmp'), log = (...a) => console.log('  [prebuilt]', ...a);
