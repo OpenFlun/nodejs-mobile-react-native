@@ -157,7 +157,9 @@ iOS 各自内置独立的 Node.js 运行时(版本对照见"安装"章节);
 | Android  | Windows / macOS / Linux | Android NDK;Windows 上还需 Visual Studio 与 Git for Windows |
 | iOS      | **仅 macOS**            | 完整 Xcode(Command Line Tools 单独不够)+ CocoaPods          |
 
-- **Node.js**:最低版本见 `package.json` 的 `engines.node` 字段
+- **Node.js**:最低版本见 `package.json` 的 `engines.node` 字段;该要求针对**开发机**(驱动构建的
+  Node),与移动端运行时版本无关——移动端运行时由 `prebuiltAssets.version` 决定,可以是 Node.js 18 等
+  更早版本,详见"运行时版本与开发机的 Node 版本相互独立";
 - **Python 3.6+**:gyp 构建时需要
 - **首次安装的预编译资源**:Android 与 iOS 的运行时二进制由 postinstall 自动下载,无需手动准备
 
@@ -525,6 +527,7 @@ Windows / Linux / macOS 上均支持编译 **Android** 原生模块;编译 **iOS
 `prebuiltAssets.version` 指定的是**下载用的 Release tag**, 与开发机安装的 Node
 版本无关;**同一 tag 下 Android 与 iOS 附件的实际运行时版本可能不同**(以产物为准);只要开发机的 Node 满足 `package.json` 的
 `engines.node` 要求即可编译原生模块--产物的 ABI 由 NDK 与运行时自带的头文件决定, 开发机的 Node 仅用于驱动构建工具链;
+**`engines.node` 只约束开发机, 不约束移动端运行时**;移动端运行时可以是 Node.js 18 ;
 
 切换运行时版本请设置环境变量 `NODE_MOBILE_PREBUILT_VERSION`(详见"安装"章节);
 
