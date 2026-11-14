@@ -123,7 +123,8 @@ if [ "$PLATFORM_NAME" == "iphoneos" ]; then
   npm_config_platform="ios" \
   npm_config_format="make-ios" \
   npm_config_arch="arm64" \
-  npm --verbose --foreground-scripts rebuild --build-from-source
+  npm_config_build_from_source="true" \
+  npm --verbose --foreground-scripts rebuild
 elif [ "$NATIVE_ARCH" == "arm64" ]; then
   GYP_DEFINES="OS=ios target_arch=arm64 iossim=true" \
   CARGO_BUILD_TARGET="aarch64-apple-ios-sim" \
@@ -133,7 +134,8 @@ elif [ "$NATIVE_ARCH" == "arm64" ]; then
   npm_config_platform="ios" \
   npm_config_format="make-ios" \
   npm_config_arch="arm64" \
-  npm --verbose --foreground-scripts rebuild --build-from-source
+  npm_config_build_from_source="true" \
+  npm --verbose --foreground-scripts rebuild
 else
   GYP_DEFINES="OS=ios target_arch=x64 iossim=true" \
   CARGO_BUILD_TARGET="x86_64-apple-ios" \
@@ -143,6 +145,7 @@ else
   npm_config_platform="ios" \
   npm_config_format="make-ios" \
   npm_config_arch="x64" \
-  npm --verbose --foreground-scripts rebuild --build-from-source
+  npm_config_build_from_source="true" \
+  npm --verbose --foreground-scripts rebuild
 fi
 popd

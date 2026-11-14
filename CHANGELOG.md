@@ -1,4 +1,11 @@
 # 变更日志
+## [2.1.7] - 2026-11-14 09:09
+### 适配
+- 适配 npm 12:该版本起不再把未知 CLI flag 透传为 `npm_config_*` 环境变量,而是直接报
+  `EUNKNOWNCONFIG Unknown cli flag: --build-from-source`;`scripts/ios-build-native-modules.sh` 三处
+  `npm rebuild --build-from-source` 改为环境变量 `npm_config_build_from_source="true"`,强制从源码编译的
+  行为不变;npm 12 以下对本次改动无感;
+
 ## [2.1.6] - 2026-11-13 21:55
 ### 升级注意事项
 - `engines.node` 由 `>=18` 收紧为 `>=22.12.0`,与作用域内其它包统一,并覆盖 `@flun/nodejs-mobile-gyp` 的真实下限;
@@ -12,7 +19,3 @@
 ## [2.1.5] - 2026-11-11 11:05
 ### 优化
 - 整体做了一些细节优化;
-
-## [2.1.4] - 2026-11-06 11:08
-### 优化
-- 细节优化;
