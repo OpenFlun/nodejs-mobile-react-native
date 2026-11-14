@@ -9,7 +9,9 @@
   "exports": {
     ".": "./index.js"
   },
-  "scripts": {},
+  "scripts": {
+    "postinstall": "node scripts/create-node-structure.js && node scripts/download-prebuilt-assets.js"
+  },
   "keywords": [
     "react-native",
     "mobile",
