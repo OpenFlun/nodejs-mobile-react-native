@@ -81,7 +81,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "prebuiltAssets": {
-    "version": "v22.23.2",
+    "version": "v24.19.0",
     "sources": [
       "https://gitee.com/OpenFlun/nodejs-mobile/releases/download",
       "https://github.com/OpenFlun/nodejs-mobile/releases/download"

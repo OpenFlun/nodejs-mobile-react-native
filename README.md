@@ -529,6 +529,16 @@ Windows / Linux / macOS 上均支持编译 **Android** 原生模块;编译 **iOS
 `engines.node` 要求即可编译原生模块--产物的 ABI 由 NDK 与运行时自带的头文件决定, 开发机的 Node 仅用于驱动构建工具链;
 **`engines.node` 只约束开发机, 不约束移动端运行时**;移动端运行时可以是 Node.js 18 ;
 
+**Node.js 24 及以上需要 C++20**:
+
+Node.js 24 的官方头文件依赖 C++20 特性, 用 C++17 编译原生模块会直接失败;插件已在 `android/build.gradle` 的
+`externalNativeBuild.cmake` 中统一设置 `cppFlags "-std=c++20"`, 该参数不随运行时版本分支,
+对 Node 18 / 22 / 24 均可正常编译(C++20 向后兼容);
+
+之所以用 `cppFlags` 而不是 `CXX_STANDARD 20`, 是因为 `android/CMakeLists.txt` 的
+`cmake_minimum_required(VERSION 3.4.1)` 过低, CMake 会拒绝 `CXX_STANDARD 20`(需 3.12+);
+`cppFlags` 直接透传给编译器, 不受 CMake 版本限制;
+
 切换运行时版本请设置环境变量 `NODE_MOBILE_PREBUILT_VERSION`(详见"安装"章节);
 
 Android 上编译原生模块耗时较长(需为每个目标架构分别编译);编译产物 `.node` 会按架构分开打进应用, 运行时选择正确的那个;

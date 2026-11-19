@@ -80,7 +80,7 @@ android {
         versionName "1.0"
         externalNativeBuild {
             cmake {
-                cppFlags ""
+                cppFlags "-std=c++20"
                 if(!_isCorrectSTLDefinedByApp) {
                     arguments "-DANDROID_STL=c++_shared"
                 }
