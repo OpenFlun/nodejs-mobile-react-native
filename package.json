@@ -49,17 +49,17 @@
     "LICENSE"
   ],
   "license": "ISC",
-  "homepage": "https://github.com/OpenFlun/nodejs-mobile-react-native#readme",
+  "homepage": "https://github.com/AtFlun/nodejs-mobile-react-native#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/OpenFlun/nodejs-mobile-react-native.git"
+    "url": "https://github.com/AtFlun/nodejs-mobile-react-native.git"
   },
   "gitee": {
     "type": "git",
-    "url": "https://gitee.com/OpenFlun/nodejs-mobile-react-native.git"
+    "url": "https://gitee.com/AtFlun/nodejs-mobile-react-native.git"
   },
   "bugs": {
-    "url": "https://github.com/OpenFlun/nodejs-mobile-react-native/issues"
+    "url": "https://github.com/AtFlun/nodejs-mobile-react-native/issues"
   },
   "peerDependencies": {
     "react-native": ">=0.88.1"
@@ -83,8 +83,8 @@
   "prebuiltAssets": {
     "version": "v24.19.0",
     "sources": [
-      "https://gitee.com/OpenFlun/nodejs-mobile/releases/download",
-      "https://github.com/OpenFlun/nodejs-mobile/releases/download"
+      "https://gitee.com/AtFlun/nodejs-mobile/releases/download",
+      "https://github.com/AtFlun/nodejs-mobile/releases/download"
     ],
     "assets": [
       {

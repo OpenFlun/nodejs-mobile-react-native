@@ -10,8 +10,8 @@ iOS 各自内置独立的 Node.js 运行时(版本对照见"安装"章节);
 可直接用于任何 React Native 项目, 也可由 [`@flun/node-mobile-app`](https://www.npmjs.com/package/@flun/node-mobile-app)
 在构建时自动调用;
 
-- GitHub: https://github.com/OpenFlun/nodejs-mobile-react-native
-- Gitee: https://gitee.com/OpenFlun/nodejs-mobile-react-native
+- GitHub: https://github.com/AtFlun/nodejs-mobile-react-native
+- Gitee: https://gitee.com/AtFlun/nodejs-mobile-react-native
 - npm: https://www.npmjs.com/package/@flun/nodejs-mobile-react-native
 
 ### 与原版的差异
@@ -150,7 +150,7 @@ iOS 各自内置独立的 Node.js 运行时(版本对照见"安装"章节);
 本包是 [`@flun/node-mobile-app`](https://www.npmjs.com/package/@flun/node-mobile-app)
 与 [`@flun/nodejs-mobile-gyp`](https://www.npmjs.com/package/@flun/nodejs-mobile-gyp) 之间的中间层;
 完整的宿主平台与工具链要求见 gyp
-的"[支持的系统与配置要求](https://github.com/OpenFlun/nodejs-mobile-gyp#支持的系统与配置要求)".本包相关的要点:
+的"[支持的系统与配置要求](https://github.com/AtFlun/nodejs-mobile-gyp#支持的系统与配置要求)".本包相关的要点:
 
 | 目标平台 | 宿主平台                | 额外要求                                                    |
 | -------- | ----------------------- | ----------------------------------------------------------- |
@@ -520,7 +520,7 @@ Windows / Linux / macOS 上均支持编译 **Android** 原生模块;编译 **iOS
 - **Android**:需要 Android NDK; 插件会自动定位 NDK 并把工具链路径注入构建环境, 无需手动设置 `ANDROID_NDK_HOME`;
 - **iOS**:需要**完整 Xcode**(仅 macOS;Command Line Tools 单独不够);
 - **Windows 额外需要**:Visual Studio(含"使用 C++ 的桌面开发"工作负载)与 Git for Windows(提供 make 所需的 POSIX 工具);
-  完整清单见 [@flun/nodejs-mobile-gyp 的系统要求](https://github.com/OpenFlun/nodejs-mobile-gyp#支持的系统与配置要求);
+  完整清单见 [@flun/nodejs-mobile-gyp 的系统要求](https://github.com/AtFlun/nodejs-mobile-gyp#支持的系统与配置要求);
 
 **运行时版本与开发机的 Node 版本相互独立**:
 
@@ -711,9 +711,9 @@ ISC
 
 ## 贡献
 
-- 源码: [GitHub](https://github.com/OpenFlun/nodejs-mobile-react-native)
-- 中国镜像: [Gitee](https://gitee.com/OpenFlun/nodejs-mobile-react-native)
-- 问题反馈: [Issues](https://github.com/OpenFlun/nodejs-mobile-react-native/issues)
+- 源码: [GitHub](https://github.com/AtFlun/nodejs-mobile-react-native)
+- 中国镜像: [Gitee](https://gitee.com/AtFlun/nodejs-mobile-react-native)
+- 问题反馈: [Issues](https://github.com/AtFlun/nodejs-mobile-react-native/issues)
 
 [rn-ee]: https://github.com/facebook/react-native/blob/055c941c4045/Libraries/vendor/emitter/EventEmitter.js
 [node-ee]: https://github.com/nodejs-mobile/nodejs-mobile/blob/9e90dd8c14fce5b047aa16d00e22a8ef44222a99/lib/events.js

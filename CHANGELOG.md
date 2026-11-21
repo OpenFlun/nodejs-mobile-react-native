@@ -1,5 +1,9 @@
 # 变更日志
 
+## [2.2.1] - 2026-11-21 20:27
+### 变更
+- 本仓库地址中的用户名由 OpenFlun 改为 AtFlun,请注意!!!;
+
 ## [2.2.0] - 2026-11-20 10:28
 ### 功能更新
 - 编译支持 node v24.19.0 并设置为默认;
@@ -12,13 +16,3 @@
   `EUNKNOWNCONFIG Unknown cli flag: --build-from-source`;`scripts/ios-build-native-modules.sh` 三处
   `npm rebuild --build-from-source` 改为环境变量 `npm_config_build_from_source="true"`,强制从源码编译的
   行为不变;npm 12 以下对本次改动无感;
-
-## [2.1.6] - 2026-11-13 21:55
-### 升级注意事项
-- `engines.node` 由 `>=18` 收紧为 `>=22.12.0`,与作用域内其它包统一,并覆盖 `@flun/nodejs-mobile-gyp` 的真实下限;
-  在 Node 18 / 20.0–20.8 上安装会直接失败;
-- **该要求只约束开发机, 不约束移动端运行时**;移动端运行时由 `prebuiltAssets.version` 决定,仍可以是 Node.js 18;
-
-### 文档
-- README「支持的系统与配置要求」与「运行时版本与开发机的 Node 版本相互独立」两节补充上述区分,避免把
-  `engines.node` 误解为"不能编译以 Node 18 为运行时的移动版本";

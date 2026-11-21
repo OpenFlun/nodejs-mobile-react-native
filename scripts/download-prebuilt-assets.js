@@ -5,8 +5,8 @@
  *   {
  *     "version": "v18.20.4",
  *     "sources": [
- *       "https://gitee.com/OpenFlun/nodejs-mobile/releases/download",
- *       "https://github.com/OpenFlun/nodejs-mobile/releases/download"
+ *       "https://gitee.com/AtFlun/nodejs-mobile/releases/download",
+ *       "https://github.com/AtFlun/nodejs-mobile/releases/download"
  *     ],
  *     "assets": [
  *       {
@@ -65,7 +65,7 @@ const targetVersion = process.env.NODE_MOBILE_PREBUILT_VERSION || cfg.version,
   sources = cfg.sources || [], assets = cfg.assets || [];
 
 if (!targetVersion || sources.length === 0 || assets.length === 0)
-    log('prebuiltAssets 字段配置不完整,跳过'), process.exit(0);
+  log('prebuiltAssets 字段配置不完整,跳过'), process.exit(0);
 
 const processAsset = async asset => {
   const { file, entry, target, platforms, envKey, hintOn, hint } = asset;
